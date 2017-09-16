@@ -1,0 +1,189 @@
+\documentclass[12]{article}
+\usepackage{fullpage}
+
+\usepackage{times}
+\usepackage{graphicx}
+
+\usepackage{latexsym}
+
+\usepackage{hyperref}
+\PassOptionsToPackage{pdfmark}{hyperref}\RequirePackage{hyperref}
+\usepackage{color}
+
+
+\begin{document}
+\title{Data Visualizaton\\ Assignment 1}
+\date{Due: Beginning of class: Wednesday, September 13}
+\maketitle
+\noindent
+{\bf Note:}
+For some parts of this assignment, it is best to view the assignment as an electronic document in a pdf reader (e.g. Adobe). Then you can zoom in as you need (or not).
+\begin{enumerate}
+\item Numbers (You are free to draw these by hand):   
+\begin{enumerate}
+\item (4 marks) There are many number systems historically, here's your chance to get exposed to some of them. For one mark each, draw the following numbers in the given number system: 
+\begin{enumerate}
+\item 312 in Attic Greek
+\item 25 in Cuneiform
+\item 3/16 in ancient Egyptian (use Horus eye fractions)
+\end{enumerate}
+\item (2 marks) Give a pictorial form that will serve as an ostensive definition of the number $\pi$.
+\end{enumerate}
+
+\item Evolution of the Eye.  Watch History channel's episode of ``Evolve"  on ``The Eye".  It comes as a single approximately 45 min video:
+\href{https://www.youtube.com/watch?v=iuuan74brFM}{\color{blue} Evolve: The Eye {\small https://www.youtube.com/watch?v=iuuan74brFM}}.  
+Watch this, then answer the following questions:
+\begin{enumerate}
+\item Kent Stevens undertook some interesting research with respect to dinosaur vision:
+\begin{enumerate}
+\item (2 marks) What is meant by the degree of binocular overlap?  And what purpose would it serve to a Tyrannosaurus Rex?
+\item (2 marks) How did Dr. Stevens determine this overlap? And what is this overlap for the Tyrannosaurus?
+\item (2 marks) What is the degree of binocular overlap for the Allosaurus and what does this suggest about its' style of hunting?  What is the supporting evidence for this style of hunting?
+\end{enumerate}
+\item (3 marks) What features of mammal eyeball anatomies does Chris Kirk suggest are adaptations to provide night vision?
+\item Primates have 60 degrees of binocular overlap. 
+\begin{enumerate}
+\item (2 marks) What reasons are given for that large an overlap for primates? 
+\item (4 marks) What evolutionary pressures on primates are suggested by Nate Dominy and Scott McGraw as a result of this overlap?  How did primates adapt to these pressures?
+\end{enumerate}
+\end{enumerate}
+
+\item Steroscopic displays.
+
+Stereoscopes were early devices that allowed the viewer's visual system to see a three dimensional image from two side by side flat images.  The first such device was invented by Charles Wheatstone in 1838.  While having many practical applications (including use in interpreting aerial photography) the approach was popularized with the handheld ``Holmes stereoscope'' invented by (though deliberately not patented \ldots Wikipedia article) Oliver Wendell Holmes.
+An example of this style of stereoscope (from the Edison museum, Vienna Ontario) is shown below:
+\begin{center}
+\includegraphics[width=2.5in]{Steroscope.png} 
+\includegraphics[width=2.5in]{steroscopeRWO.png} 
+\end{center}
+
+An example card displaying an early image of Manhattan (ca 1909) is shown here:
+\begin{center}
+\includegraphics[width=4in]{NYstereo.jpg} 
+\end{center}
+
+There are many ways of producing stereoscopic images and a number of  manufacturers
+have been bringing ``3D movies?  and now home ``monitors'' to the market.  These typically
+require the aid of special glasses.
+
+How this works however, is that the human visual system takes slightly different input from its left and its right visual fields.
+Your visual system is in fact doing this all the time.  For example,  take the index finger on one hand, place it in the centre of your visual field and move it closer and farther from your nose.  Your eyes will go closer together (cross-eyed) and farther apart as they follow your finger.  At all times, however you will perceive a single three dimensional index finger, even though your left visual field is presented with a very different image than is your right.
+
+We can take advantage of this and produce stereoscopic displays which, when properly viewed (with no special glasses!), will be perceived as three-dimensional.
+
+For example, below is a ``steroscopic display''  that, when properly viewed, will pop out as a three dimensional cube.
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=4in]{cube-3d.jpg} 
+\end{center}
+\end{figure}
+We effect this by tricking your visual system in one of two ways as follows:
+\begin{itemize}
+\item either  stare at the space between the
+two {\bf leftmost} cubes and allow your gaze to drift into the distance (?wall-eyed? or ``wide-eyed''), or 
+\item stare at the space between
+the two {\em rightmost} cubes, cross your eyes and slowly let them uncross.
+\end{itemize}
+Either way a (three dimensional) cube
+should appear in the place where you are staring. 
+
+It might help to move your head closer and farther from the
+page/screen until the the 3D image coalesces. This may take some practice, but each time you do it it will get
+easier. If you use the wrong method (wall-eyed or cross-eyed) a 3d image should still appear, it just  won't seem quite right somehow.
+
+Once you've got this working, try using the cross-eyed method on the images of Manhattan above.  You should be able to fuse these so that it appears to be a three dimensional image of Manhattan.
+
+The following are (hopefully fun) exercises in visualizing data via stereoscopic display.
+
+\begin{enumerate}
+\item (7 marks) The image below is simply produced with only typed characters of fixed width and should allow us to develop some understanding of how stereoscopic images are constructed and how it is that our visual system fuses them.
+\begin{center}
+\includegraphics[width=6in]{wide-eyed-stereo.jpg} 
+\end{center}
+Each picture is meant to be a simple image of the same scene:  a tree, some flowers, the sun, and the
+horizon through a window. 
+\begin{enumerate}
+\item Although the image says ``wide eyed stereo'', first try to fuse the image using the {\bf cross-eyed} method.  This will be simpler (I think) if you scale the images (e.g. in Acrobat Reader) to be {\bf large} on your screen.  
+
+When you have it right, there will be three images, the centre of which will be three dimensional.  Once you have done this, in addition to seeing the scene in 3D, you will see the three words ``wide'', ``eyed'', and ``stereo'' floating below the picture. 
+\begin{enumerate}
+\item From closest to farthest to you, what is the order of these three floating words?
+\item The scene viewed in this way won't be quite right (at least in the sense that it does not seem to correspond to nature).
+What do you see to be wrong with the scene?
+\end{enumerate}
+
+\item Now visually fuse the image using the {\bf wide-eyed} method.  This will be simpler (I think) if you scale the images (e.g. in Acrobat Reader) to be relatively {\bf small} on your screen.  
+
+Again, once you have done this, in addition to seeing the scene in 3D, you will see the three words ``wide'', ``eyed'', and ``stereo'' floating below the picture.
+\begin{enumerate}
+\item From closest to farthest to you, what is the order of these three floating words?
+\item The scene viewed in this way should appear more natural and correct.  What features of this scene are now ``right''?
+\end{enumerate}
+\item By careful comparison of the characters in each image, how must the images have been constructed to allow us to fuse the images using the wide-eyed method?
+
+\item Why do these two images not fuse properly using the cross-eyed method?  What simple change would you make to have them fuse using the cross-eyed method? 
+
+\end{enumerate}
+
+\item (2 marks) The following image is an aerial stereo photograph. The instructions at the bottom say
+?. . . cross eyes slightly until a third white dot appears between the two.
+New center image is 3D! ?
+\begin{center}
+\includegraphics[width=4.2in]{stereo-aerial.jpg} 
+\end{center}
+Keeping your eyes crossed at the level at which the third white dot appears should allow you to see the 3D
+topography fairly clearly.
+Where is the highest point in the 3D image?  The lowest?
+
+
+\item (2 marks) Here is another twist on having your visual system construct a three dimensional image.  The images here are called ?random dot autosterograms? or ?magic eye? pictures. That?s because
+the stereo pairing used to produce the image is buried in a background colour image of seemingly random
+dots/figures.
+
+Both of the following two sterogram displays show the same thing (you only need to make one work; I
+find the first one easiest). The image is in the middle of each and occupies much of the rectangle.
+
+Once you decode the image, there is no mistaking what you see -- the data image literally pops out of the
+display!
+
+\vspace{0.05 \textheight}
+Describe either 3D image.
+
+
+\begin{center}
+Wide-eyed \\
+\includegraphics[width=6in]{data-viz-parallel.jpg} \\
+
+\vspace{0.05 \textheight}
+Cross-eyed \\
+\includegraphics[width=6in]{data-viz-cross.jpg} 
+\end{center}
+\end{enumerate}
+
+\newpage
+\item (8 marks) { Orthogonal projections}.  Here you will review some basic facts about projections in real vector spaces.\\
+\vspace{0.01\textheight}\\
+{\bf NOTE:  Solution to this problem must be completed using LaTeX, or RMarkdown (as will the whole assignment after this one)}\\
+\vspace{0.01\textheight}\\
+ Recall that for two (column) vectors in the plane, ${\bf y} = (y_1, y_2)^T$ and ${\bf x} = (x_1, x_2)^T,$ that we may orthogonally project either one onto the other. 
+(Of course, this all carries over to ${\bf x}, {\bf y} \in \Re^n$ for any integer $n > 0$.)
+\begin{enumerate}
+\item Recall that the usual inner product between real vectors ${\bf x} $ and ${\bf y} $ is 
+\[{\bf x} \cdot {\bf y} = {\bf x}^T{\bf y} = x_1y_1 + x_2y_2 = ||{\bf x}|| ~~ ||{\bf y}|| ~\cos \theta
+\]
+where $\theta$ is the angle between the two vectors.  Use this to prove that the orthogonal projection
+of ${\bf y}$ onto ${\bf x}$ is simply 
+\[ {\bf x}({\bf x}^T{\bf x})^{-1}{\bf x}^T {\bf y}.\]
+\item Given  ${\bf x}$ as above, write down a vector, ${\bf r}$ say, in $\Re^2$ that is orthogonal to ${\bf x}$.  Prove that your choice of ${\bf r}$ is orthogonal to ${\bf x}$.
+      \item Let ${\bf u}=(\frac{1}{\sqrt{2}},\frac{1}{\sqrt{2}})^T$, ${\bf v}=(\frac{-1}{\sqrt{2}},\frac{1}{\sqrt{2}})^T$,  and ${\bf y}=(y_1, y_2)^T$. 
+      \begin{enumerate}
+\item Show that ${\bf u}$ and ${\bf v}$ are orthonormal.
+\item  Orthogonally project ${\bf y}$ onto each of ${\bf u}$ and ${\bf v}$ and hence determine the values of $a$ and $b$ such that 
+      ${\bf y} = a {\bf u} + b {\bf v}$.
+
+\end{enumerate}
+  
+\end{enumerate}
+\end{enumerate}
+
+\end{document}

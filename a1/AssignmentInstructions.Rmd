@@ -1,0 +1,76 @@
+---
+title: "Assignment instructions"
+author: "R.W. Oldford"
+output: pdf_document
+---
+
+Assignment solutions need to be submitted using `R Markdown` from `RStudio` or `LaTeX` if you prefer.  **R Markdown is strongly recommended.**  This, for example is itself an `R Markdown` document.
+
+Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+In answering assignment questions,  incorporate mathematics, `R code`, and plots as appropriate.  
+
+For example, using `RMarkdown` from `RStudio`, you might have something inline showing like this `qt(0.9, 64)` and evaluated like this `r qt(0.9, 64)`.  
+
+You will also want to include whole chunks of code and output like this:
+
+```{r}
+n <- 40
+x <- runif(n, min=-2, max=2)
+y <- x^2 + rnorm(n, sd=0.2)
+plot(x,y, pch=19, col= adjustcolor("firebrick", alpha.f=0.7))
+```
+
+And then have your discussion appear around it.  It might, or might not, include some mathematics inline like this $\mu({\bf x})$ or as a block like this
+$$
+Y_{new} - \widetilde{\mu}({\bf x}_{new}) \sim N\left(0 ~,~ \sigma^2 \left( 1 + {\bf x}_{new}^T\left( {\bf X}^T{\bf X} \right)^{-1}
+                      {\bf x}_{new} \right) \right).
+$$
+or even a multi-equation block like: $\frac{1}{2}$
+$$
+\begin{array}{rcl}
+\alpha & = & Pr\left(-a ~\le~ 
+\frac{ Y_{new} - \widetilde{\mu}({\bf x}_{new}) 
+              }
+     {\widetilde{\sigma} \sqrt{ 1 ~+~
+      {\bf x}^T_{new}
+             \left( {\bf X}^T{\bf X} \right)^{-1}
+             {\bf x}_{new}
+             }
+     }
+     \le ~a~ \right) \\
+&& \\
+&=& Pr \left(~ {\bf I}_{new}({\bf x}_{new})
+            \ni Y_{new} 
+        ~\right)
+\end{array}
+$$
+
+Make your answers complete, as if they were a report on your findings.
+
+To include images:
+
+![A million?](wtf_man.png)
+
+To include a link  [Click here for Chris Jordan: tuna](http://www.chrisjordan.com/gallery/rtn2/#tuna) 
+
+For miscellaneous other info, see 
+[RStudio's RMarkdown Basics](http://rmarkdown.rstudio.com/authoring_basics.html) or their [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+
+
+
+
