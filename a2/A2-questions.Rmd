@@ -1,0 +1,137 @@
+---
+title: 'Assignment 2: Data Visualization'
+fontsize: 9pt
+geometry: margin=.75in
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  html_document: default
+header-includes:
+- \usepackage{graphicx}
+- \usepackage{color}
+graphics: yes
+subtitle: 'Due beginning of class: Monday September 25'
+classoption: letter
+---
+```{r, setup, echo=FALSE}
+library(knitr)
+```
+
+1. Visual fractions can be used to provide a sense of the size of that fraction (provided it is not too small).   In the document `VisualFractions.pdf`, you will find an introduction to some graphical primitives that will allow you to draw some visual fractions using circles (the  `VisualFractions.Rmd` contains the code in an Rmarkdown file which you might find helpful).
+\begin{enumerate}
+\item (10 marks) 
+Read that document and complete the definition of the function $\mathtt{visualFraction(\cdots)}$.
+\item Show the results of your program on $\frac{3}{100}$ and also on $\frac{37}{1000}$.  In each case, show the results {\bf both when } $\mathtt{random=FALSE}$ {\bf and when} $\mathtt{random=TRUE}$.
+\item (2 marks) Explain why the case $\mathtt{random=TRUE}$ might be of interest.
+\end{enumerate}
+
+
+2. In class, a time scale was used to indicate the average time it would take to first win Lotto 649, purchasing 1 ticket per weekly draw.   Assume that a winning ticket is one which matches the 6 numbers drawn from 1 to 49.  
+    \begin{enumerate}
+    \item (1 mark) Suppose $p$ is the probability of winning the grand prize.  Write down the value for $p$ for  Lotto 649. 
+    \item (1 mark) Write down the probability of winning ({\bf for the first time}) on the $n$th draw (i.e. losing on the first $n-1$ draws).
+    \item (1 mark) Determine the expected number of draws you must play (1 ticket each draw) before winning for the first time.
+    \item (1 mark) Show how the average time to win Lotto 649 when playing 1 ticket per weekly 649 draw  turns into the long wait given for the Homo sapiens example (as described in the slides)
+    \end{enumerate}
+
+3. Colour blindness:  Consider the following oppositional colour palette:
+
+    ![Oppositional colour palettes](./img/changingHueOppositional.png)
+
+    Each of these two palettes uses opposing colours, either yellow to blue or green to red, to provide a palette that changes continuously from one extreme to the other.
+    The image itself is available on the course website where this assignment was located.  Up load this image to the website [http://www.color-blindness.com/coblis-color-blindness-simulator/](http://www.color-blindness.com/coblis-color-blindness-simulator/) and explore how well each of the two palettes compare for the various sorts of colour blindness.
+    a. (3 marks) How well do each of these palettes work for those unable to see colour at all?  Why?
+    b. (3 marks) Which oppositional colour pair seems best over all -- yellow-blue or green-red? Explain your answer.
+    c. (4 marks) Given what we discussed in class about the photo-receptors in the human retina, what characteristic of the photo-receptors might explain your choice in part (b)?
+    
+4.  Visual representations.  
+    \begin{enumerate}
+    \item The following diagram was produced by the World Health Organizationa few years back.
+    \begin{center}
+    \includegraphics[width=0.6\textwidth]{img/water-drop.png}
+    \end{center}
+    \begin{enumerate}
+    \item (4 marks) Suppose the percentages were not actually displayed.  What visual features of the display are available to the reader to decode the numbers presented?  Which of these correspond to the percentages?  
+    \item (4 marks) From Cleveland and McGill's ordering of elementary tasks identify which of these tasks are used where in this diagram.  Which of these elementary tasks are most likely to be used in decoding the numbers by the reader?  Comment on the likely accuracy of this decoding.
+    \item (4 marks) Create a table representing the same numerical information.  Give the pros and cons of the table compared to the original diagram. (See `Tables.Rmd` in the folder for this assignment)
+    \end{enumerate}
+    \item The following diagram was produced with considerable enthusiasm from a site called premiermicrosoft.wordpress.com
+    \href{http://premiermicrosoft.wordpress.com/2012/02/12/how-to-make-a-graphchart-in-microsoft-word/}{\color {blue} https://premiermicrosoft.wordpress.com/2012/02/12/how-to-make-a-graphchart-in-microsoft-word/index.htm}
+    (not to be confused with Microsoft's https://premier.microsoft.com) where it is called a ``cone chart''.
+    \begin{center}
+    \begin{quotation}
+    {\scriptsize To quote the author: ``Now, jazz up some effects for your graph. You can customize your current graph, by clicking Design in Chart Tools.'' \ldots sigh.}
+    \end{quotation}
+    \includegraphics[width=0.7\textwidth]{img/MSPremierConeChart.png}
+    \end{center}
+    \begin{enumerate}
+    \item (5 marks) Write out all of the values that appear in the diagram which are categorical and say how they are encoded in the diagram.
+    \item (3 marks) Consider how the values of `Time for Programs to Start Up` encoded.  From Cleveland and McGill's ordering of elementary tasks identify which of these tasks are used in the encoding of these values.  Which elementary tasks are most likely to be used in decoding the values by the reader?  Comment on the likely accuracy of this decoding.  
+    \item (2 marks) Critically assess the contribution of the scales appearing at the left and back of the plot.
+    \end{enumerate}
+    \end{enumerate}
+
+5. Tables are an important way to display symbolic numbers.   In the document `Tables.pdf` (and perhaps more importantly its source file `Tables.Rmd`) you will find some examples of manipulating tables using the `knitr` `R` package.   Please consult those files (downloading them and opening them from RStudio) and familiarize yourself with the material found there.  It will be very helpful to you in undertaking the analysis in this questions.
+
+    Here you are going to work on some Statistics Canada data to produce an interesting table.  The data are on aboriginal populations taken from a  Statistics Canada website [http://www.statcan.gc.ca/tables-tableaux/sum-som/l01/cst01/demo60a-eng.htm](http://www.statcan.gc.ca/tables-tableaux/sum-som/l01/cst01/demo60a-eng.htm).
+
+    This data is available in a "Comma Separated Values" or ``csv'' file named "aboriginal.csv".  This should appear in the same location as this file of questions.  Download both the ".Rmd" file of questions and the"csv" file of data and place them in the same directory on your machine.  
+    
+    In `RStudio` check what the current working directory is using the `getwd()` command in `R`.  For example in my case the current working directory is 
+    
+    ```{r}
+    getwd()
+    ```
+    
+    As it turns out, this is where I have saved the data file.  Had a different string have been returned for the directory, I would have needed to set the working directory to the appropriate place using `setwd()` as follows:
+    
+    ```{r}
+    setwd("/Users/rwoldford/Documents/Admin/courses/Data\ Visualization/Assignments/Fall17/Assignment\ 2")
+    ```
+    
+    Now that the directory is set to the data location, we can read the csv file into a data frame and show the results.
+    
+    ```{r}
+    data <- read.csv("aboriginal.csv")
+    # The first few columns look like
+    kable( data[, 1:4])
+    data3 <- data
+other <- NULL
+for (i in 1:ncol(data3)) { 
+  other <- append(other, data3[,i][1] - sum(data3[,i][c(2:4)]))
+}
+data3[1,] <- other
+rownames(data3)[1] <- "Other.aborginal"
+
+kable(t(data3), digits = 2)
+    ```
+    
+    \begin{enumerate}
+\item (10 marks)
+Reformat this table to make whatever patterns it contains more easily apprehended.  Show each step that you choose to follow by displaying the table that results from each step.  Say why you chose to make that step by referencing the rules we had for reformatting tables. Write down a summary of whatever patterns you have uncovered. 
+\item (4 marks)  Note that the category `Aboriginal.identity.population` includes the "Aboriginal groups (North American Indian, Métis and Inuit), multiple Aboriginal responses and Aboriginal responses not included elsewhere".  Replace the data on `Aboriginal.identity.population` by `Other.aboriginal` that is the difference between `Aboriginal.identity.population` and the North American Indian, Métis and Inuit groups.  Again, give the table the best presentation and summarize whatever pattern exists.
+\item (4 marks) Whatever marginal (row or column) pattern you identified in the previous part, build the table of deviations from that pattern, display it, and comment on what you see.
+\end{enumerate}
+  
+
+6. **Graduate students**  (bonus undergraduates):  Suppose we have $n$-dimensional real and linearly independent vectors ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$ and ${\bf y}$.  The vector ${\bf y}$ is the sum of two $n$-dimensional real vectors ${\bf \mu}$ and  ${\bf r}$
+ \[ {\bf y} = {\bf \mu} + {\bf r} \]
+where ${\bf \mu}$ is restricted to be a linear combination of the vectors  ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$.  That is 
+\[ {\bf \mu} = \theta_1 \times {\bf x}_1 + \theta_2 \times {\bf x}_2 + \cdots  + \theta_p \times{\bf x}_p\]
+for some unknown real constants $\theta_1, \theta_2, \ldots, \theta_p$, or equivalently
+ \[  {\bf \mu}  = {\bf X}{\bf \theta}\]
+where ${\bf X} = [ {\bf x}_1, \ldots,  {\bf x}_p]$ is an $n \times p$ matrix and ${\bf \theta} = (\theta_1, \theta_2, \ldots, \theta_p)^T$ is a $p \times 1$ vector.
+\begin{enumerate}
+\item  (5 marks) For any ${\bf y}$, neither  ${\bf \mu}$ nor ${\bf r}$ are uniquely defined.  Suppose we choose particular vectors $\widehat{\bf \mu}$, and $\widehat{\bf r}$ (with ${\bf y} = \widehat{\bf \mu} + \widehat{\bf r}~$) to be such that they are orthogonal to one another (whatever values any $\theta_i$ take).   That is, $\widehat{\bf \mu}^T \widehat{\bf r} = 0$.
+
+    Prove that this additional constraint implies that
+\[\widehat{\bf \mu} = {\bf P} {\bf y} \]
+    where ${\bf P} = {\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T$ and hence show that $\widehat{\bf r} = ({\bf I}_n -{\bf P}){\bf y}$.
+\item (2 marks) Show that ${\bf P}$ is an   idempotent matrix, that is that  ${\bf P}^2={\bf P}$.
+\item (2 marks) Show that if ${\bf P}$ is an idempotent matrix, then so must be $ ({\bf I}_n -{\bf P})$.
+\item (2 marks) Show that  $\widehat{\bf r}$ is in fact orthogonal to $\widehat{\bf \mu}$.
+\item (5 marks)  Show that $\widehat{\bf \mu} = {\bf P} {\bf y}$ is the choice of ${\bf \mu}$ which minimizes the squared length of ${\bf r}$.  That is it minimizes ${\bf r}^T{\bf r}=({\bf y} - {\bf \mu})^T({\bf y} - {\bf \mu})$.
+\end{enumerate}
+

@@ -1,0 +1,109 @@
+---
+title: "Tables in knitr"
+author: "R.W. Oldford"
+output: pdf_document
+---
+
+
+In the `knitr` package there is a function called `kable` which is available to help 
+produce some nicely formatted tables from RMarkdown (for example).  See `help(kable)` for details 
+(you may need to execute `library(knitr)` first). 
+    
+Here we will illustrate some of its functionality by using part of a dataset from `R`.
+    
+```{r, setup first table}
+library(knitr)
+data <- head(mtcars)
+kable(data, caption="Motor trends' car data")
+```
+    
+Note that `kable` already displays the numbers so that they line up positionally.  Some of the functionality of `kable` can be seen in the next few examples:
+    
+```{r}
+# swap rows and columns (transpose of data = t(data) )
+# Note that it matches the number of decimal places within each column 
+# so that the numbers line up vertically.
+kable(t(data))  
+
+# swap rows and columns and round so that there are no (digits = 0) decimal places
+kable(t(data), digits=0)
+
+# Changing alignment in columns here
+kable(t(data), digits = 0, align="lcrlcr")
+
+# back to the original rows and columns but reducing the number of digits displayed
+kable(data/10, digits=0)
+
+# No rownames
+kable(data, row.names = FALSE)
+
+# To actually change the row names we have to work on the dataset
+orig.rownames <- rownames(data)  # save the rownames
+rownames(data) <- LETTERS[1:nrow(data)]
+kable(data, digits = 0)
+
+# And set the rownames back
+rownames(data) <- orig.rownames
+
+# Changing the colnames could have been done in the same way using colnames(data)
+# or through the kable function
+kable(data, digits = 0, col.names = LETTERS[1:ncol(data)])
+
+```
+
+It's also important to be able to manipulate the data before creating the table.
+
+Here we will add column means to the data and then sort the cols in ascending order of column means.
+
+```{r}
+# bind a row (rbind) to data of the colMeans 
+data1 <- rbind(data, colMeans(data))
+rownames(data1) <- c(rownames(data), "Average")
+colOrder <- order(colMeans(data))
+
+# The column means
+colMeans(data)
+
+# the order from smallest to largest
+order(colMeans(data))
+
+# So we reorder the data as
+
+colorder <- order(colMeans(data))
+# With the column averages
+kable(data1[,colorder], digits = 0)
+
+# Without the column averages
+kable(data[,colorder], digits = 0)
+
+# And now order the rows in descending order of means.
+roworder <- order(rowMeans(data), decreasing = TRUE)
+# First order the table as desired
+newtable <- data[, colorder][roworder,]
+kable(newtable, digits = 0)
+```
+
+We might also then remove the column medians from the last table to see the deviations from the column summary (our potential model).
+
+```{r}
+colMedians <- apply(newtable, MARGIN = 2, FUN = median)
+colMedians <- t(as.matrix(colMedians))
+colMedians
+
+# Now form the new table of deviations by sweeping away the colMedians
+deviations <- sweep(newtable, MARGIN = 2, STATS = colMedians)
+
+# Note that in this table, the columns are variates that are all on different scales.
+# In such cases it makes sense to use different digits for each of the columns.
+kable(deviations, digits = c(rep(1,6), rep(0,5)))
+```
+
+The table shows a variety of deviation patterns.  The last two variates (`hp` and `disp`) have very different deviation patterns from the previous 9, with a notable outlier in the first row.  The first six variates have deviations that are all about $\pm 0.5$ with again some notable outliers.
+
+Given that the variates were all on different scales, in Statistics we might try to make them comparable by standardizing them (note that this removes the means from the columns and divides by the standard deviations)
+
+```{r}
+scaledtable <- scale(newtable)
+kable(scaledtable, digits = 1)
+
+```
