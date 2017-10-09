@@ -1,0 +1,63 @@
+---
+title: 'Assignment 2: Data Visualization'
+fontsize: 9pt
+geometry: margin=.75in
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  html_document:
+    mathjax: local
+    self_contained: no
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{color}
+  - \usepackage{booktabs}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage[table]{xcolor}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+graphics: yes
+subtitle: 'Due beginning of class: Monday September 25'
+classoption: letter
+---
+
+```{r, setup, echo=FALSE}
+library(knitr)
+```
+
+
+(c) (2 marks) Show that if ${\bf P}$ is an idempotent matrix, then so must be $ ({\bf I}_n -{\bf P}) $.
+
+
+We first show that P is symmetric:
+
+$$
+\begin{array}{rcl}
+{\bf P}^T &=& ({\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T)^T\\
+&=& ({\bf X}^T)^T({\bf X} ({\bf X}^T {\bf X})^{-1})^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^{-1})^T{\bf X}^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^T)^{-1}{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf P}
+\end{array}
+$$
+
+$\therefore {\bf P}$ is symmetric.
+
+$$
+\begin{array}{rcl}
+\widehat{\bf \mu}^T \widehat{\bf r} &= & \widehat{\bf \mu} \cdot \widehat{\bf r}\\
+&= & {\bf P}{\bf y} \cdot ({\bf I}_n-{\bf P}){\bf y}\\
+&= & {\bf y} \cdot{\bf P} ({\bf I}_n-{\bf P}){\bf y} \\
+&= & {\bf y}^T({\bf P}-{\bf P}^2){\bf y}\\
+&= & {\bf y}^T{\bf 0}{\bf y} \\
+&= & {\bf 0} \\
+\end{array}
+$$

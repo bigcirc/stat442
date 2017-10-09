@@ -1,7 +1,28 @@
 ---
 title: "Tables in knitr"
 author: "R.W. Oldford"
-output: pdf_document
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  html_document:
+    mathjax: local
+    self_contained: no
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{color}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage[table]{xcolor}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
 ---
 
 
@@ -16,7 +37,17 @@ library(knitr)
 data <- head(mtcars)
 kable(data, caption="Motor trends' car data")
 ```
-    
+
+```{r}
+library(kableExtra)
+dt <- mtcars[1:5, 1:6]
+dt
+kable(dt, "latex") %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
+```
+
+
 Note that `kable` already displays the numbers so that they line up positionally.  Some of the functionality of `kable` can be seen in the next few examples:
     
 ```{r}

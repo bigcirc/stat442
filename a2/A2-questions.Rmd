@@ -98,14 +98,14 @@ Read that document and complete the definition of the function $\mathtt{visualFr
     # The first few columns look like
     kable( data[, 1:4])
     data3 <- data
-other <- NULL
-for (i in 1:ncol(data3)) { 
-  other <- append(other, data3[,i][1] - sum(data3[,i][c(2:4)]))
-}
-data3[1,] <- other
-rownames(data3)[1] <- "Other.aborginal"
-
-kable(t(data3), digits = 2)
+    other <- NULL
+    for (i in 1:ncol(data3)) { 
+      other <- append(other, data3[,i][1] - sum(data3[,i][c(2:4)]))
+    }
+    data3[1,] <- other
+    rownames(data3)[1] <- "Other.aborginal"
+    
+    kable(t(data3), digits = 2)
     ```
     
     \begin{enumerate}

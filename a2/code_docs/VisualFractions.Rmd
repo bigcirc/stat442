@@ -15,7 +15,7 @@ require("grid")
 
 We're going to implement visual fractions using an array of circles.  In grid this is simply done as follows:
 
-```{r}
+```{r, echo=FALSE}
 grid.circle()
 ```
 
@@ -185,6 +185,23 @@ visualFraction <- function(num, # the numerator
   ##
   ## INSERT YOUR CODE BELOW:
   
+  ## calculating the coordinates of the centers of the circles
+  centers = xy2grid(1:ncols, nrows:1)
+  # dividing to make get points within the unit square
+  centers[,1] = centers[,1]/(ncols+1)
+  centers[,2] = (2*centers[,2] - 1)/(2*nrows)
+  
+  ## generating the display
+  grid.newpage()
+  for (i in 1:den) {
+    if(i %in% indices) {col = numCol} else {col = denCol}
+    xcoord = centers[i,1]
+    ycoord = centers[i,2]
+    grid.circle(x=xcoord,
+                y=ycoord,
+                r=radius, 
+                gp=gpar(fill=col))
+  }
 }
 
 ```

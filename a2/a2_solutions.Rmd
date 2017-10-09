@@ -1,0 +1,714 @@
+---
+title: 'Assignment 2: Data Visualization'
+fontsize: 9pt
+geometry: margin=.75in
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  html_document:
+    mathjax: local
+    self_contained: no
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{color}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage[table]{xcolor}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+graphics: yes
+subtitle: 'Azoacha Forcheh, 20558994'
+classoption: letter
+---
+
+```{r, setup, echo=FALSE}
+library(knitr)
+```
+
+1. Visual fractions can be used to provide a sense of the size of that fraction (provided it is not too small).   In the document `VisualFractions.pdf`, you will find an introduction to some graphical primitives that will allow you to draw some visual fractions using circles (the  `VisualFractions.Rmd` contains the code in an Rmarkdown file which you might find helpful).
+  (a) (10 marks) 
+  Read that document and complete the definition of the function $\mathtt{visualFraction(\cdots)}$.
+
+    ```{r, include=FALSE}
+    require("grid")
+    
+    xy2grid <- function(x, y) {
+      n <- length(x)
+      m <- length(y)
+      # Return the coordinates of the m x n grid havng
+      # locations (x,y) for all x and y
+      cbind(rep(x, times=m), rep(y, each=n))
+    }
+    ```
+    ```{r}
+    visualFraction <- function(num, # the numerator
+                               den, # the denominator
+                               numCol="red",
+                               # numerator colour
+                               denCol="white",
+                               # denominator colour
+                               random=FALSE,
+                               # a logical indicating
+                               # whether the numerator values
+                               # are to appear at random
+                               # locations (if TRUE) or not.
+                               ncols = NULL
+                               # number of columns to be
+                               # used in the array
+    ) {
+      # begin with some error checking
+      #
+      #  Check the logical
+      if (!is.logical(random))
+        stop(paste("random must be TRUE or FALSE, not:",
+                   random))
+      #
+      #  Check the numerator
+      if (!is.numeric(num))
+        stop(paste("num must be a number, not", num))
+      if (length(num) != 1)
+        stop(paste("num must be a single number, not of length",
+                   length(num)))
+      if (floor(num) != num | num < 0 )
+        stop(paste("num must be a non-negative integer, not",
+                   num))
+      #
+      #  Check the denominator
+      if (!is.numeric(den))
+        stop(paste("den must be a number, not", den))
+      if (length(den) != 1)
+        stop(paste("den must be a single number, not of length",
+                   length(den)))
+      if (floor(den) != den | den < 0 )
+        stop(paste("den must be a non-negative integer, not",
+                   den))
+      #
+      #  Check both
+      if (num > den)
+        stop(paste("num =", num, "> den =", den))
+      #
+      #  Check ncols
+      #
+      #  Default is NULL, so if user doesn't supply one let's
+      #  try to make it close to square (default more cols than rows)
+      if (is.null(ncols)) ncols <- ceiling(sqrt(den))
+    
+      #  Now check any user supplied value for ncols
+      if (!is.numeric(ncols))
+        stop(paste("ncols must be a number, not", ncols))
+      if (length(ncols) != 1)
+        stop(paste("ncols must be a single number, not of length",
+                   length(ncols)))
+      if (floor(ncols) != ncols | ncols < 0 )
+        stop(paste("ncols must be a non-negative integer, not",
+                   ncols))
+      if (ncols > den )
+        stop(paste("ncols =", ncols,"> den =", den))
+    
+      ## If we have ncols columns, we will need
+      ## nrows rows where
+      nrows <- ceiling(den/ncols)
+    
+      ## We'll also need a radius
+      ## This is size provides spacing for most
+      radius <- 1/(2*(max(nrows,ncols)+5))
+    
+      ##
+      ## Now it's your turn
+      ## The display should be an nrows x ncols array of den circles
+      ## 
+      ## If random=FALSE, the first num circles (from the top left of the
+      ## array and proceeding left to right, then top to bottom) 
+      ## should be coloured numCol, the remainder coloured denCol.
+      ## 
+      ## If random=TRUE, num circles selected at random in the array
+      ## should be coloured numCol, the remainder denCol.
+      ## 
+      ## That is, if we index the array 1 to den from top left by row to bottom
+      ## right, the indices we would need to colour numCol would be
+      if (random) {indices <- sample(1:den, num)} else {indices <- 1:num}
+      ##
+      ## INSERT YOUR CODE BELOW:
+      
+      ## calculating the coordinates of the centers of the circles
+      centers = xy2grid(1:ncols, nrows:1)
+      # dividing to make get points within the unit square
+      centers[,1] = centers[,1]/(ncols+1)
+      centers[,2] = (2*centers[,2] - 1)/(2*nrows)
+      
+      ## generating the display
+      grid.newpage()
+      for (i in 1:den) {
+        if(i %in% indices) {col = numCol} else {col = denCol}
+        xcoord = centers[i,1]
+        ycoord = centers[i,2]
+        grid.circle(x=xcoord,
+                    y=ycoord,
+                    r=radius, 
+                    gp=gpar(fill=col))
+      }
+    }
+    
+    ```
+  
+  (b) Show the results of your program on $\frac{3}{100}$ and also on $\frac{37}{1000}$.  In each case, show the results \textbf{both when } $\mathtt{random=FALSE}$ \textbf{and when} $\mathtt{random=TRUE}$.
+
+    ```{r}
+    # results for 3/100
+    visualFraction(3,100)
+    visualFraction(3,100, random=TRUE)
+    ```
+
+    ```{r}
+    # results for 37/1000
+    visualFraction(37,1000)
+    visualFraction(37,1000, random=TRUE)
+    ```
+  
+  (c) (2 marks) Explain why the case $\mathtt{random=TRUE}$ might be of interest.
+  
+      For larger denominators, having the overplotted circles be randomly spread out makes it easier to quickly visually evaluate/approximate what ratio the original fraction was than having them all grouped out at the top of the diagram.
+
+2. In class, a time scale was used to indicate the average time it would take to first win Lotto 649, purchasing 1 ticket per weekly draw.   Assume that a winning ticket is one which matches the 6 numbers drawn from 1 to 49.
+    (a) (1 mark) Suppose $p$ is the probability of winning the grand prize.  Write down the value for $p$ for  Lotto 649.
+    The numbers are being drawn without replacement and their order does not matter, so the number of possible combinations is:
+    $$
+    \begin{array}{rcl}
+    \binom{49}{6} & = & \frac{49!}{6!(49-6)!}\\
+    \\
+    & = &  \frac{49!}{6!43!}\\
+    \\
+    & = & 13,983,816
+    \\
+    \end{array}
+    $$
+    
+    $\therefore p = \frac{1}{13,983,816}$
+    (b) (1 mark) Write down the probability of winning (\textbf{for the first time}) on the $n$th draw (i.e. losing on the first $n-1$ draws).
+    Let $X$ be a random variable that represents the number of draws up to and including the draw in which the player wins for the first time. Then:
+    
+    $$
+    X \sim Geo(p) \quad \quad where\ \ p = \frac{1}{13,983,816}
+    $$
+    Therefore, the probability of winning (\textbf{for the first time}) on the $n$th draw is:
+    
+    $$
+    \begin{array}{rcl}
+    P(X=n) &=& p(1-p)^{n-1}\\
+    \\
+    &=& \frac{13,983,815^{n-1}}{13,983,816^{n}}\\
+    \\
+    &=& \frac{1}{13,983,815} \cdot (\frac{13,983,815}{13,983,816})^{n}
+    \end{array}
+    $$
+
+
+    (c) (1 mark) Determine the expected number of draws you must play (1 ticket each draw) before winning for the first time.
+    As in (b), let $X$ be a random variable that represents the number of draws up to and including the draw in which you wins for the first time. Then, the expected number of draws you must play (1 ticket each draw) before winning for the first time is $E(X)$. Since $X$ follows a geometric distribution with probablity $p$,
+    
+    $$
+    \begin{array}{rcl}
+    E(X) & = & \frac{1}{p}\\
+    \\
+    & = & 13,983,816
+    \end{array}
+    $$
+    $\therefore$ \textbf{$13,983,816$} is the expected number of draws you must play before winning for the first time.
+    
+    
+    (d) (1 mark) Show how the average time to win Lotto 649 when playing 1 ticket per weekly 649 draw turns into the long wait given for the Homo sapiens example (as described in the slides).
+    
+3. Colour blindness:
+
+
+    a. (3 marks) How well do each of these palettes work for those unable to see colour at all?  Why?
+
+
+        The image below shows the monochromatic view of the original palettes (generated by the given website).
+        
+        \begin{figure}[h]
+          \centering
+            \includegraphics{./img/no_colour}
+            \caption{Monochromatic View of Palettes}
+        \end{figure}
+    
+        Though both are grey palettes with no varying hue, the \textbf{yellow to blue} palette works better for those unable to see color.
+    
+        This is because this palette has opposing, distinguishable \textbf{saturation}, which increases from the start to the end of the palette. Hence, those unable to see color can use saturation instead of hue to distinguish between categories.
+    
+        The second palette (the green to red one) however, has very little, almost-unnoticeable variation in the saturation of the grey, so there is no way that anyone with monochromatic vision will be able to tell apart various categories.
+
+
+    b. (3 marks) Which oppositional colour pair seems best over all -- yellow-blue or green-red? Explain your answer.
+
+
+        Overall, to benefit the most amount of people, it would be best to use the \textbf{green-red} palette. 
+    
+        \begin{itemize}
+        \item No color blindness: both are good as the opposing hues are distinguishable.
+        \item Protanopia: 2nd palette is worse (becomes a dark yellow palette with very little saturation variety); first is still a yellow blue palette with distinguishable hues
+        \item Deuteranopia: Same result as with protanopia, but 2nd palette is a dark orange palette and 1st is now an orange blue palette
+        \item Tritanopia: Both palettes have opposing colors on their opposite ends, but 2nd is better as there is a higher range of constrasting hue along the palette because the red opposes the blue more than the lavender does.
+        \end{itemize}
+    
+        While the green-red palette is the worse option of the two palettes for people with monochromatic vision, it is an extremely rare condition - it occurs 1 in 33000 people according to colourblindawareness.org. Hence, unless a substantial subset of the target viewers of the graphics have monochromatic vision, it is overall better to use the \textbf{green-red} palette.
+
+
+    c. (4 marks) Given what we discussed in class about the photo-receptors in the human retina, what characteristic of the photo-receptors might explain your choice in part (b)?
+        The medium and long cones are both able to absorb green and red light to different degrees, whereas the short cones are able to absorb purple, blue and green light. Hence, most of the cones in the human eye can absorb green and red color, and the colors in between those wavelengths, so humans would be better able to perceive the colors in the green-red palette.
+        
+    
+4.  Visual representations.  
+    (a) The following diagram was produced by the World Health Organization few years back.
+    i. (4 marks) Suppose the percentages were not actually displayed.  What visual features of the display are available to the reader to decode the numbers presented?  Which of these correspond to the percentages? \newline
+      \newline
+      The \textbf{size} of the drops and their \textbf{colors/designs} can be used by the reader to decode the presented numbers. \newline
+      The color of the drops tells the reader what category of water (satisfactory or unsatisfactory) that the percentages would be representing. Water is typically depicted as being a vibrant blue, so readers would likely be able to use these differences in saturation and design to distinguish between the categories that each drop represented. The more-saturated blue drop would be decoded as satisfactory water, and the less-saturated, pink-dotted drop would be decoded as unsatisfactory water. \newline
+      As can be seen in the original diagram, the size of the drop positively correlates with the percentage displayed. A reader can infer that a bigger drop indicates a higher percentage, especially since the scale is the same for both years and for both categories displayed.
+      \vspace{5mm}
+    ii. (4 marks) From Cleveland and McGill's ordering of elementary tasks identify which of these tasks are used where in this diagram.  Which of these elementary tasks are most likely to be used in decoding the numbers by the reader?  Comment on the likely accuracy of this decoding.
+    \vspace{5mm}
+    \begin{itemize}
+    \item \textbf{Position on identical but nonaligned scales}: this is used to judge the size of the drops, and hence the magnitude of the numbers/percentages. It is somewhat accuragte for this decoding, as the relative positioning of the drop tells the user how large the magnitude of the numbers are (the higher positioned the drop is, the larger its corresponding percentage's magnitiude.) However, this is only clear when used with the elementary task of judging area.
+    \item \textbf{Area}: this is used with the size of drops. It is the most accurate decoding for the magnitude of the numbers, as it is easy to quickly percieve the difference in the area of the drops, and thus decode what percentage the drop may represent.
+    \item \textbf{Color hue}: this is used in the design of the drops. It is the most accurate decoding for the category/type of water source being described, as it is the colors being used - blue vs brown and blue with pink dots - have respectively positive and negative connotation to them. Hence, it is easy for readers to quickly decode what category the drops and their numbers correspond to.   
+    \end{itemize}
+    \vspace{5mm}
+    iii. (4 marks) Create a table representing the same numerical information. Give the pros and cons of the table compared to the original diagram. (See `Tables.Rmd` in the folder for this assignment)    
+    
+    ```{r}
+    library(kableExtra)
+    cleanWater = c(82, 66)
+    waterData = data.frame(c('Satisfactory', 'Unsatisfactory'), rbind(cleanWater, 100-cleanWater))
+    colnames(waterData) = c('', "(%)", "(%)")
+    rownames(waterData) = NULL
+    kable(waterData, "latex", booktabs = T) %>%
+      kable_styling() %>%
+      add_header_above(c("Water Source" = 1, "2000" = 1, "2015" = 1)) %>%
+      add_header_above(c(" " = 1, "Year" = 2))
+    ```
+    
+    \newpage
+    
+    The table is easier and faster to interpret for readers as there are no visual cues to decode. On the other hand, it is less aesthetically pleasing and the information at the top of the original diagram is lost.
+    
+    (b) The following diagram was produced with considerable enthusiasm from a site called premiermicrosoft.wordpress.com
+    \href{http://premiermicrosoft.wordpress.com/2012/02/12/how-to-make-a-graphchart-in-microsoft-word/}{\color {blue} https://premiermicrosoft.wordpress.com/2012/02/12/how-to-make-a-graphchart-in-microsoft-word/index.htm}
+    (not to be confused with Microsoft's https://premier.microsoft.com) where it is called a ``cone chart''.
+    i. (5 marks) Write out all of the values that appear in the diagram which are categorical and say how they are encoded in the diagram.
+    \vspace{5mm}
+    \begin{itemize}
+    \item \textbf{Activity during start up}: the activities that occur during program start up are categorical values. They are also encoded by their relative position along the scale at the back of the plot. Each column of cones corresponds, from left to right, to the "Launching", "Splash Screen", "Loading", and "Processing" activities respectively.
+    \item \textbf{Programs}: the type of program is a categorical value. The program type is encoded by the \textbf{saturation} of the purple hue of the cones. They are also encoded by their relative position along the scale at the left of the plot. Each row of cones corresponds, from bottom to top, to Program A, B, and C respectively, with the saturation increasing as you go down the rows from the top.
+    \end{itemize}
+    \vspace{5mm}
+    ii. (3 marks) Consider how the values of `Time for Programs to Start Up` encoded.  From Cleveland and McGill's ordering of elementary tasks identify which of these tasks are used in the encoding of these values.  Which elementary tasks are most likely to be used in decoding the values by the reader?  Comment on the likely accuracy of this decoding.
+    \vspace{5mm}
+    \begin{itemize}
+    \item \textbf{Position along a common scale}: Each category of activity, and each program type is positioned along common scales - the left and back scales respectively. For both the activities and program types, this is the most likely and most accurate task to be used by readers for decoding. This is due to the clear spacing and separation of the cones in each row and category.
+    \item \textbf{Length}: The length of time that each of the program activities takes is encoded in the diagram as the \textbf{height}, or vertical length of the cones. This is the most likely task to be used in decoding the values, as well as the most accurate. A higher height clearly indicates a longer run time to the reader, and it is easy to differentiate between the lengths of the cones.
+    \item \textbf{Volume}: The length of time that each of the program activities takes is also encoded in the diagram as the \textbf{volume} of the cones. This is the least likely task to be used in decoding the values, as well as the least accurate of the two options. A higher volume does indicate a longer run time to the reader, but the area of the base of the cones is not clear as the only quantitative scale available is for the height of the cone. Hence, it is difficult for readers to accurately determine what the volumes are and which cones have a higher volume than others.
+    \item \textbf{Color Saturation}: Each program is encoded by a certain saturation of purple in the cones. Compared to positioning along the scale, it is the less likely and accurate way of decoding the program category that the cones represent. The saturation for program B and A are very similar, so a reader would be unlikely to quickly recognize that as a way to differentiate between the program categories, or they would perceive the last two rows of cones as corresponding to the same program type.
+    \end{itemize}
+    \vspace{5mm}
+    iii. (2 marks) Critically assess the contribution of the scales appearing at the left and back of the plot. \newline
+    \newline
+    The scales to the left are useful for the user as they provide a way for users to determine what the height of the cones, and hence the program run times, as this scale is a numerical one. The scale at the back contributes nothing to the plot however, as there are no values on the scale.
+    
+5. Tables are an important way to display symbolic numbers.   In the document `Tables.pdf` (and perhaps more importantly its source file `Tables.Rmd`) you will find some examples of manipulating tables using the `knitr` `R` package.   Please consult those files (downloading them and opening them from RStudio) and familiarize yourself with the material found there.  It will be very helpful to you in undertaking the analysis in this questions.
+    
+(a) (10 marks)
+Reformat this table to make whatever patterns it contains more easily apprehended.  Show each step that you choose to follow by displaying the table that results from each step.  Say why you chose to make that step by referencing the rules we had for reformatting tables. Write down a summary of whatever patterns you have uncovered.
+
+```{r}
+setwd("/Users/azoachaforcheh/Documents/Waterloo/F17/stat442/a2/data")
+data = read.csv("aboriginal.csv")
+new_table = data
+rownames(new_table)[1] = "Aboriginal.identity"
+
+# Rule: Numbers that vary the least should appear in columns.
+kable(t(new_table))
+```
+
+```{r}
+# Rule: Use memorable self-explanatory labels and names.
+# Change from abbreviated province name to full name
+nprovinces = ncol(new_table)
+for (i in 1:nprovinces) {
+  abbr = colnames(new_table)[i]
+  if (abbr == "CA") {colnames(new_table)[i] = "Canada"}
+  if (abbr == "NL") {colnames(new_table)[i] = "Newfoundland and Labrador"}
+  if (abbr == "PE") {colnames(new_table)[i] = "Prince Edward Island"}
+  if (abbr == "NS") {colnames(new_table)[i] = "Nova Scotia"}
+  if (abbr == "NB") {colnames(new_table)[i] = "New Brunswick"}
+  if (abbr == "PQ") {colnames(new_table)[i] = "Quebec"}
+  if (abbr == "ON") {colnames(new_table)[i] = "Ontario"}
+  if (abbr == "MB") {colnames(new_table)[i] = "Manitoba"}
+  if (abbr == "SK") {colnames(new_table)[i] = "Saskatchewan"}
+  if (abbr == "AB") {colnames(new_table)[i] = "Alberta"}
+  if (abbr == "BC") {colnames(new_table)[i] = "British Columbia"}
+  if (abbr == "YT") {colnames(new_table)[i] = "Yukon"}
+  if (abbr == "NT") {colnames(new_table)[i] = "Northwest Territories"}
+  if (abbr == "NU") {colnames(new_table)[i] = "Nunavut"}
+}
+
+kable(t(new_table))
+```
+
+```{r}
+# Rule: Reduce number of digits.
+new_tab2 = round(new_table, digits = 1)
+kable(t(new_tab2))
+```
+    
+```{r}
+# Rule: Use averages (or medians) to help focus the eye over the array.
+# adding the row averages
+new_tab3 = rbind(new_tab2, colMeans(new_tab2))
+rownames(new_tab3) = c(rownames(new_tab2), "Ave.")
+kable(t(new_tab3))
+
+# adding the column averages
+new_tab4 = cbind(new_tab3, rowMeans(new_tab3))
+colnames(new_tab4) = c(colnames(new_tab3), "Average")
+new_tab4 = round(new_tab4, digits = 1)
+kable(t(new_tab4))
+```
+
+```{r}
+# Rule: Rearrange columns so that averages are strictly decreasing (or increasing) from left to right.
+roworder = c(order(rowMeans(new_tab3[1:5,]), decreasing = TRUE),6)
+new_tab4 = new_tab4[roworder,]
+kable(t(new_tab4), align="rrrrrc")
+```
+
+```{r}
+# Rule: Note dramatically exceptional values and exclude them from pattern summary calculations.
+new_tab5 = new_tab4
+new_tab5['Non.aboriginal','Average'] = (sum(new_tab4['Non.aboriginal',])-49.70-15)/
+  (length(new_tab4['Non.aboriginal',])-2)
+new_tab5['Inuit','Average'] = (sum(new_tab4['Inuit',], 1, 0)-10.1-84)/
+  (length(new_tab4['Inuit',])-2)
+new_tab5['North.American.Indian','Average'] = (sum(new_tab4['North.American.Indian',])-20.8-30.8)/
+  (length(new_tab4['North.American.Indian',])-2)
+new_tab5['Aboriginal.identity','Average'] = (sum(new_tab4['Aboriginal.identity',])-50.3-85.0)/
+  (length(new_tab4['Aboriginal.identity',])-2)
+
+newRowOrder = c(order(new_tab5[1:5,'Average'], decreasing = TRUE),6)
+new_tab5 = round(new_tab5[newRowOrder,], digits = 1)
+
+final_tab = new_tab5
+final_tab['Non.aboriginal','Average'] = 
+  paste0(final_tab['Non.aboriginal','Average'], '*')
+final_tab['Inuit','Average'] = 
+  paste0(final_tab['Inuit','Average'], '*')
+final_tab['North.American.Indian','Average'] = 
+  paste0(final_tab['North.American.Indian','Average'], '*')
+final_tab['Aboriginal.identity','Average'] = 
+  paste0(final_tab['Aboriginal.identity','Average'], '*')
+final_tab['Ave.','Average'] = 
+  paste0(final_tab['Ave.','Average'], '*')
+
+final_tab['Non.aboriginal', 'Northwest Territories'] = 
+  paste0('(', final_tab['Non.aboriginal', 'Northwest Territories'] ,')')
+final_tab['Non.aboriginal', 'Nunavut'] = 
+  paste0('(', final_tab['Non.aboriginal', 'Nunavut'] ,'.0)')
+final_tab['Inuit', 'Northwest Territories'] = 
+  paste0('(', final_tab['Inuit', 'Northwest Territories'] ,')')
+final_tab['Inuit', 'Nunavut'] = 
+  paste0('(', final_tab['Inuit', 'Nunavut'] ,')')
+final_tab['North.American.Indian', 'Northwest Territories'] = 
+  paste0('(', final_tab['North.American.Indian', 'Northwest Territories'] ,')')
+
+final_tab['North.American.Indian', 'Yukon'] = 
+  paste0('(', final_tab['North.American.Indian', 'Yukon'] ,')')
+final_tab['Aboriginal.identity', 'Northwest Territories'] = 
+  paste0('(', final_tab['Aboriginal.identity', 'Northwest Territories'] ,')')
+final_tab['Aboriginal.identity', 'Nunavut'] = 
+  paste0('(', final_tab['Aboriginal.identity', 'Nunavut'] ,'.0)')
+
+final_tab['Ave.', 'Northwest Territories'] = 
+  paste0('(', final_tab['Ave.', 'Northwest Territories'] ,')')
+final_tab['Ave.', 'Nunavut'] = 
+  paste0('(', final_tab['Ave.', 'Nunavut'] ,')')
+final_tab['Ave.', 'Yukon'] = 
+  paste0('(', final_tab['Ave.', 'Yukon'] ,')')
+
+kable(t(final_tab), align="rrrrrc")
+```
+  
+    
+In summary, there are:
+
+\begin{itemize}
+  \item 2 exceptionally low values for Non-aboriginal people in the Northwest Territories and Nunavut (differing from their average by about 43 and 77% respectively),
+  \item 2 exceptionally high values for the Aboriginal identity population in the Northwest Territories and Nunavut (differing from their average by about 43 and 77% respectively),
+  \item 2 exceptionally high values for North American Indian people in Yukon and the Northwest Territories (differing from their average by about 18 and 28% respectively), and
+  \item 2 exceptionally high values for Inuit people in the Northwest Territories and Nunavut (differing from their average by about 9 and 83% respectively).
+\end{itemize}
+
+Overall, the Northwest Territories and Nunavut have exceptionally high percentages of Aboriginal people and exceptionally low percentages of Non-Aboriginal people compared to other provinces, and to the rest of the country.\vspace{5mm}    
+    
+(b) (4 marks)  Note that the category `Aboriginal.identity.population` includes the "Aboriginal groups (North American Indian, Métis and Inuit), multiple Aboriginal responses and Aboriginal responses not included elsewhere".  Replace the data on `Aboriginal.identity.population` by `Other.aboriginal` that is the difference between `Aboriginal.identity.population` and the North American Indian, Métis and Inuit groups.  Again, give the table the best presentation and summarize whatever pattern exists.
+
+
+```{r}
+data3 = data
+other = NULL
+for (i in 1:ncol(data3)) { 
+  other = append(other, data3[,i][1] - sum(data3[,i][c(2:4)]))
+}
+data3[1,] = other
+rownames(data3)[1] = "Other.aborginal"
+
+# Change from abbreviated province name to full name
+nprovinces = ncol(data3)
+for (i in 1:nprovinces) {
+  abbr = colnames(data3)[i]
+  if (abbr == "CA") {colnames(data3)[i] = "Canada"}
+  if (abbr == "NL") {colnames(data3)[i] = "Newfoundland and Labrador"}
+  if (abbr == "PE") {colnames(data3)[i] = "Prince Edward Island"}
+  if (abbr == "NS") {colnames(data3)[i] = "Nova Scotia"}
+  if (abbr == "NB") {colnames(data3)[i] = "New Brunswick"}
+  if (abbr == "PQ") {colnames(data3)[i] = "Quebec"}
+  if (abbr == "ON") {colnames(data3)[i] = "Ontario"}
+  if (abbr == "MB") {colnames(data3)[i] = "Manitoba"}
+  if (abbr == "SK") {colnames(data3)[i] = "Saskatchewan"}
+  if (abbr == "AB") {colnames(data3)[i] = "Alberta"}
+  if (abbr == "BC") {colnames(data3)[i] = "British Columbia"}
+  if (abbr == "YT") {colnames(data3)[i] = "Yukon"}
+  if (abbr == "NT") {colnames(data3)[i] = "Northwest Territories"}
+  if (abbr == "NU") {colnames(data3)[i] = "Nunavut"}
+}
+
+data3 = round(data3, digits = 1)
+
+# adding the row averages
+data_avgs = rbind(data3, colMeans(data3))
+rownames(data_avgs) = c(rownames(data3), "Ave.")
+
+# adding the column averages
+data_avg = cbind(data_avgs, rowMeans(data_avgs))
+colnames(data_avg) = c(colnames(data_avgs), "Average")
+roworder = c(order(rowMeans(data_avgs[1:5,]), decreasing = TRUE),6)
+data_avg = round(data_avg[roworder,], digits = 1)
+
+data_avg['Non.aboriginal','Average'] = (sum(data_avg['Non.aboriginal',])-49.70-15)/
+  (length(data_avg['Non.aboriginal',])-2)
+data_avg['Inuit','Average'] = (sum(data_avg['Inuit',], 1, 0)-10.1-84)/
+  (length(data_avg['Inuit',])-2)
+data_avg['North.American.Indian','Average'] = (sum(data_avg['North.American.Indian',])-20.8-30.8)/
+  (length(data_avg['North.American.Indian',])-2)
+
+newRowOrder = c(order(data_avg[1:5,'Average'], decreasing = TRUE),6)
+data_avg = round(data_avg[newRowOrder,], digits = 1)
+
+final_tab2 = data_avg
+final_tab2['Non.aboriginal','Average'] = 
+  paste0(final_tab2['Non.aboriginal','Average'], '*')
+final_tab2['Inuit','Average'] = 
+  paste0(final_tab2['Inuit','Average'], '*')
+final_tab2['North.American.Indian','Average'] = 
+  paste0(final_tab2['North.American.Indian','Average'], '*')
+final_tab2['Ave.','Average'] = 
+  paste0(final_tab2['Ave.','Average'], '.0*')
+
+final_tab2['Non.aboriginal', 'Northwest Territories'] = 
+  paste0('(', final_tab2['Non.aboriginal', 'Northwest Territories'] ,')')
+final_tab2['Non.aboriginal', 'Nunavut'] = 
+  paste0('(', final_tab2['Non.aboriginal', 'Nunavut'] ,'.0)')
+final_tab2['Inuit', 'Northwest Territories'] = 
+  paste0('(', final_tab2['Inuit', 'Northwest Territories'] ,')')
+final_tab2['Inuit', 'Nunavut'] = 
+  paste0('(', final_tab2['Inuit', 'Nunavut'] ,'.0)')
+final_tab2['North.American.Indian', 'Northwest Territories'] = 
+  paste0('(', final_tab2['North.American.Indian', 'Northwest Territories'] ,')')
+final_tab2['North.American.Indian', 'Yukon'] = 
+  paste0('(', final_tab2['North.American.Indian', 'Yukon'] ,')')
+
+final_tab2['Ave.', 'Northwest Territories'] = 
+  paste0('(', final_tab2['Ave.', 'Northwest Territories'] ,'.0)')
+final_tab2['Ave.', 'Nunavut'] = 
+  paste0('(', final_tab2['Ave.', 'Nunavut'] ,'.0)')
+final_tab2['Ave.', 'Yukon'] = 
+  paste0('(', final_tab2['Ave.', 'Yukon'] ,'.0)')
+
+kable(t(final_tab2),  align="rrrrrc")
+```
+
+
+In summary, there are:
+
+\begin{itemize}
+  \item 2 exceptionally low values for Non-aboriginal people in the Northwest Territories and Nunavut (differing from their average by about 43 and 77% respectively),
+  \item 2 exceptionally high values for North American Indian people in Yukon and the Northwest Territories (differing from their average by about 18 and 28% respectively), and
+  \item 2 exceptionally high values for Inuit people in the Northwest Territories and Nunavut (differing from their average by about 9 and 83% respectively).
+\end{itemize}
+
+Overall, the Northwest Territories and Nunavut have exceptionally high percentages of Aboriginal people and exceptionally low percentages of Non-Aboriginal people compared to other provinces, and to the rest of the country.\vspace{5mm}
+
+(c) (4 marks) Whatever marginal (row or column) pattern you identified in the previous part, build the table of deviations from that pattern, display it, and comment on what you see.
+
+```{r}
+data_deviations = data_avg
+for (col in colnames(data_avg)) {
+  data_deviations[,col] = data_avg[,col] - data_avg[,'Average']
+}
+
+final_tab3 = data_deviations
+final_tab3['Non.aboriginal','Average'] = 
+  paste0(final_tab3['Non.aboriginal','Average'], '*')
+final_tab3['Inuit','Average'] = 
+  paste0(final_tab3['Inuit','Average'], '*')
+final_tab3['North.American.Indian','Average'] = 
+  paste0(final_tab3['North.American.Indian','Average'], '*')
+final_tab3['Ave.','Average'] = 
+  paste0(final_tab3['Ave.','Average'], '*')
+
+final_tab3['Non.aboriginal', 'Northwest Territories'] = 
+  paste0('(', final_tab3['Non.aboriginal', 'Northwest Territories'] ,')')
+final_tab3['Non.aboriginal', 'Nunavut'] = 
+  paste0('(', final_tab3['Non.aboriginal', 'Nunavut'] ,')')
+final_tab3['Inuit', 'Northwest Territories'] = 
+  paste0('(', final_tab3['Inuit', 'Northwest Territories'] ,')')
+final_tab3['Inuit', 'Nunavut'] = 
+  paste0('(', final_tab3['Inuit', 'Nunavut'] ,')')
+final_tab3['North.American.Indian', 'Northwest Territories'] = 
+  paste0('(', final_tab3['North.American.Indian', 'Northwest Territories'] ,')')
+
+final_tab3['North.American.Indian', 'Yukon'] = 
+  paste0('(', final_tab3['North.American.Indian', 'Yukon'] ,')')
+
+final_tab3['Ave.', 'Northwest Territories'] = 
+  paste0('(', final_tab3['Ave.', 'Northwest Territories'] ,')')
+final_tab3['Ave.', 'Nunavut'] = 
+  paste0('(', final_tab3['Ave.', 'Nunavut'] ,')')
+final_tab3['Ave.', 'Yukon'] = 
+  paste0('(', final_tab3['Ave.', 'Yukon'] ,')')
+
+kable(t(final_tab3), digits=1, align="rrrrrc")
+```
+   
+   
+The row averages are almost all equal to each other, and hence there was no deviation from the total average.
+
+6. **Graduate students**  (bonus undergraduates):  Suppose we have $n$-dimensional real and linearly independent vectors ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$ and ${\bf y}$.  The vector ${\bf y}$ is the sum of two $n$-dimensional real vectors ${\bf \mu}$ and  ${\bf r}$
+ \[ {\bf y} = {\bf \mu} + {\bf r} \]
+where ${\bf \mu}$ is restricted to be a linear combination of the vectors  ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$.  That is 
+\[ {\bf \mu} = \theta_1 \times {\bf x}_1 + \theta_2 \times {\bf x}_2 + \cdots  + \theta_p \times{\bf x}_p\]
+for some unknown real constants $\theta_1, \theta_2, \ldots, \theta_p$, or equivalently
+ \[  {\bf \mu}  = {\bf X}{\bf \theta}\]
+where ${\bf X} = [ {\bf x}_1, \ldots,  {\bf x}_p]$ is an $n \times p$ matrix and ${\bf \theta} = (\theta_1, \theta_2, \ldots, \theta_p)^T$ is a $p \times 1$ vector.
+
+(a)  (5 marks) For any ${\bf y}$, neither  ${\bf \mu}$ nor ${\bf r}$ are uniquely defined.  Suppose we choose particular vectors $\widehat{\bf \mu}$, and $\widehat{\bf r}$ (with ${\bf y} = \widehat{\bf \mu} + \widehat{\bf r}~$) to be such that they are orthogonal to one another (whatever values any $\theta_i$ take).   That is, $\widehat{\bf \mu}^T \widehat{\bf r} = 0$.
+
+Prove that this additional constraint implies that
+\[\widehat{\bf \mu} = {\bf P} {\bf y} \]
+where ${\bf P} = {\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T$ and hence show that $\widehat{\bf r} = ({\bf I}_n -{\bf P}){\bf y}$.
+
+$\widehat{\bf \mu}^T \widehat{\bf r} = 0$ (whatever values any $\theta_i$ take) $\implies \widehat{\bf r}$ is orthogonal to ${\bf x}_1, {\bf x}_2, \ldots, {\bf x}_p$. Hence:
+$$
+\begin{array}{rcl}
+{\bf X}^T \widehat{\bf r} &=& \begin{bmatrix}
+                                {\bf x}_1^T\widehat{\bf r}\\[0.3em]
+                                \cdots\\[0.3em]
+                                {\bf x}_p^T\widehat{\bf r}
+                              \end{bmatrix}\\
+&=& {\bf 0}\\
+{\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T\widehat{\bf r} &=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf 0}\\
+{\bf P}\widehat{\bf r} &=& {\bf 0}\\
+{\bf P}{\bf y} - {\bf P}\widehat{\bf r} &=& {\bf P}{\bf y}\\
+{\bf P}\widehat{\bf \mu} &=& {\bf P}{\bf y}
+\end{array}
+$$
+But we can simplify ${\bf P}{\bf u}$ to:
+$$
+\begin{array}{rcl}
+{\bf P}{\bf \mu} &=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf \mu}\\
+&=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf X}{\bf \theta}\\
+&=& {\bf X}{\bf I}_p{\bf \theta}\\
+&=& {\bf X}{\bf \theta}\\
+&=& \widehat{\bf \mu}
+\end{array}
+$$
+$\therefore \widehat{\bf \mu} = {\bf P}{\bf y}$. For the second proof:
+
+$$
+\begin{array}{rcl}
+{\bf P}{\bf y} &=& \widehat{\bf \mu}\\
+&=& {\bf y} - \widehat{\bf r}\\
+\widehat{\bf r} &=& {\bf y} - {\bf P}{\bf y}\\
+&=& ({\bf I}_n -{\bf P}){\bf y}
+\end{array}
+$$
+
+
+(b) (2 marks) Show that ${\bf P}$ is an   idempotent matrix, that is that  ${\bf P}^2={\bf P}$.
+  
+$$
+\begin{array}{rcl}
+{\bf P}^2 &=& {\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T{\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf I}_p{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf P}
+\end{array}
+$$
+
+$\therefore {\bf P}$ is an idempotent matrix.
+
+(c) (2 marks) Show that if ${\bf P}$ is an idempotent matrix, then so must be $ ({\bf I}_n -{\bf P})$.
+
+Assume that ${\bf P}$ is an idempotent matrix.
+
+
+$$
+\begin{array}{rcl}
+({\bf I}_n -{\bf P})^2 &= ({\bf I}_n -{\bf P})({\bf I}_n -{\bf P}) \\
+&= {\bf I}_n^2 -{\bf I}_n{\bf P}-{\bf P}{\bf I}_n+{\bf P}^2 \\
+&= {\bf I}_n-{\bf P}-{\bf P}+{\bf P} & \text{since } {\bf P} \text{ is idempotent} \\
+&= {\bf I}_n-{\bf P}
+\end{array}
+$$
+
+$\therefore ({\bf I}_n -{\bf P})$ is an idempotent matrix.
+
+
+(d) (2 marks) Show that  $\widehat{\bf r}$ is in fact orthogonal to $\widehat{\bf \mu}$.
+
+We first show that P is symmetric:
+
+$$
+\begin{array}{rcl}
+{\bf P}^T &=& ({\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T)^T\\
+&=& ({\bf X}^T)^T({\bf X} ({\bf X}^T {\bf X})^{-1})^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^{-1})^T{\bf X}^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^T)^{-1}{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf P}
+\end{array}
+$$
+
+$\therefore {\bf P}$ is symmetric.
+
+$$
+\begin{array}{rcl}
+\widehat{\bf \mu}^T \widehat{\bf r} &= & \widehat{\bf \mu} \cdot \widehat{\bf r}\\
+&= & {\bf P}{\bf y} \cdot ({\bf I}_n-{\bf P}){\bf y}\\
+&= & {\bf y} \cdot{\bf P} ({\bf I}_n-{\bf P}){\bf y} \\
+&= & {\bf y}^T({\bf P}-{\bf P}^2){\bf y}\\
+&= & {\bf y}^T{\bf 0}{\bf y} \\
+&= & {\bf 0} \\
+\end{array}
+$$
+
+$\therefore \widehat{\bf \mu}$ is orthogonal to $\widehat{\bf r}$.
+    
+(e) (5 marks)  Show that $\widehat{\bf \mu} = {\bf P} {\bf y}$ is the choice of ${\bf \mu}$ which minimizes the squared length of ${\bf r}$.  That is it minimizes ${\bf r}^T{\bf r}=({\bf y} - {\bf \mu})^T({\bf y} - {\bf \mu})$.

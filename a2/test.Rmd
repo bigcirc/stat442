@@ -1,0 +1,147 @@
+---
+title: 'Assignment 2: Data Visualization'
+fontsize: 9pt
+geometry: margin=.75in
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: xelatex
+  html_document:
+    mathjax: local
+    self_contained: no
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{color}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage[table]{xcolor}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+graphics: yes
+subtitle: 'Due beginning of class: Monday September 25'
+classoption: letter
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+6. **Graduate students**  (bonus undergraduates):  Suppose we have $n$-dimensional real and linearly independent vectors ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$ and ${\bf y}$.  The vector ${\bf y}$ is the sum of two $n$-dimensional real vectors ${\bf \mu}$ and  ${\bf r}$
+ \[ {\bf y} = {\bf \mu} + {\bf r} \]
+where ${\bf \mu}$ is restricted to be a linear combination of the vectors  ${\bf x}_1, {\bf x}_2, \ldots , {\bf x}_p$.  That is 
+\[ {\bf \mu} = \theta_1 \times {\bf x}_1 + \theta_2 \times {\bf x}_2 + \cdots  + \theta_p \times{\bf x}_p\]
+for some unknown real constants $\theta_1, \theta_2, \ldots, \theta_p$, or equivalently
+ \[  {\bf \mu}  = {\bf X}{\bf \theta}\]
+where ${\bf X} = [ {\bf x}_1, \ldots,  {\bf x}_p]$ is an $n \times p$ matrix and ${\bf \theta} = (\theta_1, \theta_2, \ldots, \theta_p)^T$ is a $p \times 1$ vector.
+
+(a)  (5 marks) For any ${\bf y}$, neither  ${\bf \mu}$ nor ${\bf r}$ are uniquely defined.  Suppose we choose particular vectors $\widehat{\bf \mu}$, and $\widehat{\bf r}$ (with ${\bf y} = \widehat{\bf \mu} + \widehat{\bf r}~$) to be such that they are orthogonal to one another (whatever values any $\theta_i$ take).   That is, $\widehat{\bf \mu}^T \widehat{\bf r} = 0$.
+
+Prove that this additional constraint implies that
+\[\widehat{\bf \mu} = {\bf P} {\bf y} \]
+where ${\bf P} = {\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T$ and hence show that $\widehat{\bf r} = ({\bf I}_n -{\bf P}){\bf y}$.
+
+$\widehat{\bf \mu}^T \widehat{\bf r} = 0$ (whatever values any $\theta_i$ take) $\implies \widehat{\bf r}$ is orthogonal to ${\bf x}_1, {\bf x}_2, \ldots, {\bf x}_p$. Hence:
+$$
+\begin{array}{rcl}
+{\bf X}^T \widehat{\bf r} &=& \begin{bmatrix}
+                                {\bf x}_1^T\widehat{\bf r}\\[0.3em]
+                                \cdots\\[0.3em]
+                                {\bf x}_p^T\widehat{\bf r}
+                              \end{bmatrix}\\
+&=& {\bf 0}\\
+{\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T\widehat{\bf r} &=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf 0}\\
+{\bf P}\widehat{\bf r} &=& {\bf 0}\\
+{\bf P}{\bf y} - {\bf P}\widehat{\bf r} &=& {\bf P}{\bf y}\\
+{\bf P}\widehat{\bf \mu} &=& {\bf P}{\bf y}
+\end{array}
+$$
+But we can simplify ${\bf P}{\bf u}$ to:
+$$
+\begin{array}{rcl}
+{\bf P}{\bf \mu} &=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf \mu}\\
+&=& {\bf X}({\bf X}^T{\bf X})^{-1}{\bf X}^T{\bf X}{\bf \theta}\\
+&=& {\bf X}{\bf I}_p{\bf \theta}\\
+&=& {\bf X}{\bf \theta}\\
+&=& \widehat{\bf \mu}
+\end{array}
+$$
+$\therefore \widehat{\bf \mu} = {\bf P}{\bf y}$. For the second proof:
+
+$$
+\begin{array}{rcl}
+{\bf P}{\bf y} &=& \widehat{\bf \mu}\\
+&=& {\bf y} - \widehat{\bf r}\\
+\widehat{\bf r} &=& {\bf y} - {\bf P}{\bf y}\\
+&=& ({\bf I}_n -{\bf P}){\bf y}
+\end{array}
+$$
+
+
+(b) (2 marks) Show that ${\bf P}$ is an   idempotent matrix, that is that  ${\bf P}^2={\bf P}$.
+  
+$$
+\begin{array}{rcl}
+{\bf P}^2 &=& {\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T{\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf I}_p{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf P}
+\end{array}
+$$
+
+$\therefore {\bf P}$ is an idempotent matrix.
+
+(c) (2 marks) Show that if ${\bf P}$ is an idempotent matrix, then so must be $ ({\bf I}_n -{\bf P})$.
+
+Assume that ${\bf P}$ is an idempotent matrix.
+
+
+$$
+\begin{array}{rcl}
+({\bf I}_n -{\bf P})^2 &= ({\bf I}_n -{\bf P})({\bf I}_n -{\bf P}) \\
+&= {\bf I}_n^2 -{\bf I}_n{\bf P}-{\bf P}{\bf I}_n+{\bf P}^2 \\
+&= {\bf I}_n-{\bf P}-{\bf P}+{\bf P} & \text{since } {\bf P} \text{ is idempotent} \\
+&= {\bf I}_n-{\bf P}
+\end{array}
+$$
+
+$\therefore ({\bf I}_n -{\bf P})$ is an idempotent matrix.
+
+
+(d) (2 marks) Show that  $\widehat{\bf r}$ is in fact orthogonal to $\widehat{\bf \mu}$.
+
+We first show that P is symmetric:
+
+$$
+\begin{array}{rcl}
+{\bf P}^T &=& ({\bf X} ({\bf X}^T {\bf X})^{-1}{\bf X}^T)^T\\
+&=& ({\bf X}^T)^T({\bf X} ({\bf X}^T {\bf X})^{-1})^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^{-1})^T{\bf X}^T\\
+&=& {\bf X}(({\bf X}^T {\bf X})^T)^{-1}{\bf X}^T\\
+&=& {\bf X}({\bf X}^T {\bf X})^{-1}{\bf X}^T\\
+&=& {\bf P}
+\end{array}
+$$
+
+$\therefore {\bf P}$ is symmetric.
+
+$$
+\begin{array}{rcl}
+\widehat{\bf \mu}^T \widehat{\bf r} &= & \widehat{\bf \mu} \cdot \widehat{\bf r}\\
+&= & {\bf P}{\bf y} \cdot ({\bf I}_n-{\bf P}){\bf y}\\
+&= & {\bf y} \cdot{\bf P} ({\bf I}_n-{\bf P}){\bf y} \\
+&= & {\bf y}^T({\bf P}-{\bf P}^2){\bf y}\\
+&= & {\bf y}^T{\bf 0}{\bf y} \\
+&= & {\bf 0} \\
+\end{array}
+$$
+
+$\therefore \widehat{\bf \mu}$ is orthogonal to $\widehat{\bf r}$.
+    
+(e) (5 marks)  Show that $\widehat{\bf \mu} = {\bf P} {\bf y}$ is the choice of ${\bf \mu}$ which minimizes the squared length of ${\bf r}$.  That is it minimizes ${\bf r}^T{\bf r}=({\bf y} - {\bf \mu})^T({\bf y} - {\bf \mu})$.
