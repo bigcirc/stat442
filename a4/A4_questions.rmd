@@ -1,0 +1,241 @@
+---
+title: "Assignment 4: Data Visualization"
+subtitle: "Due beginning of class: Friday October 20"
+output: pdf_document
+geometry: margin=.75in
+graphics: yes
+header-includes:
+- \usepackage{graphicx}
+- \usepackage{color}
+fontsize: 9pt
+classoption: letter
+---
+```{r, setup, echo=FALSE}
+library(knitr)
+```
+
+This assignment requires several datasets that are available in the `R` directory assiciated with this assignment on the course webpage.
+These datasets are
+
+- `diabetes` in `R/diabetes.Rda`
+- `olive` in `R/olive.Rda`
+- `seaice` in `R/seaice.csv`
+
+1. Download the `diabetes` data from the course website.  In that file, there is a dataset on various measurements of 145 patients.  Once you load this file into your R session (or equivalently, execute its contents there) there will be a data set called \texttt{diabetes}. 
+
+
+    ```{r, eval=FALSE}
+# For example, you could use the source command.  
+# Here the file is stored in a sub-directory "R" of the current directory "."
+load("./R/diabetes.Rda")
+# Once loaded the data is available as the data frame `diabetes'
+head(diabetes)
+    ```
+
+    ```{r, echo=FALSE}
+oldwd <- getwd()
+setwd("/Users/rwoldford/Documents/Admin/courses/Data Visualization/Assignments/Fall16/Assignment 4")
+load("./R/diabetes.Rda")
+head(diabetes)
+setwd(oldwd)
+    ```
+
+    The variate \texttt{SSPG} stands for steady state plasma glucose which measures the patient's insulin resistance, a pathological condition where the body's cells fail to respond to the hormone insulin.
+
+    a. (3 marks) Produce a plot of a density estimate of \texttt{SSPG} and comment on what you see. 
+    
+    b. Construct a quantile plot of `SSPG` and comment on the shape of its distribution.
+    
+    c. (3 marks) Use `qqtest` to construct a qqplot that compares `SSPG` to a standard normal distribution.  Include envelopes in the plot.  Comment on the distribution of `SSPG` and whether it might reasonably be regarded as a sample from some normal distribution. Explain your reasoning
+    
+        **Important:** Before every `qqtest` execute `set.seed(3124159)` so that we are all seeing the same plots.
+    
+    d. The last variate, `ClinClass`, represents the classification of each patient according to the 1979 medical criteria into one of three groups: 1 = "Overt Diabetic",  2 = "Chemical Diabetic", and  3 = "Normal". 
+    
+        i. (4 marks) Construct a back to back density line-up plot to assess whether the normal and diabetic (chemical and overt combined) `SSPG` values come from the same distribution.  Use  `set.seed(3124159)` and show your code.  What conclusions do you draw?
+        
+        ii. (4 marks)  Use `qqtest` to construct a lineup plot making the same assessment, but this time assess whether the overt diabetic values of `SSPG` might have been generated from the same distribution as the normal patients.  Use  `set.seed(3124159)` and show your code. What conclusions do you draw?
+    
+        iii. **Grad students, bonus undergraduates**  (8 marks) Consider the following code:
+        
+            ```{r, echo=TRUE, eval=FALSE, fig.align="center", fig.width=10, fig.height=10}
+data <- list(x=x, y=y, z=z)
+lineup(data, 
+       generateSuspect = mixRandomly, 
+       showSuspect = myQuantilePlot, 
+       layout=c(5,4))
+            ```
+            The function `mixRandomly` will need to be rewritten to handle `data` being a list of three samples.  Write the function `myQuantilePlot` so that it overlays the sample quantile functions of each of `x`, `y`, and `z` in the same display using different colours.  Hand in your code for these two functions and illustrate the outcome (using `set.seed(314159)`) on `SSPG` for the three different clinical classes.  Comment on your findings.
+           
+2. Download the `olive` data from the course website. In that file, there is a dataset on the fatty acid content of 572 different Italian olive oils.  In total eight different fatty acids are measured.  All olive oils come from one of nine different olive growing regions in Italy. 
+
+    ```{r, echo=FALSE, fig.align="center", fig.width=3}
+oldwd <- getwd()
+setwd("/Users/rwoldford/Documents/Admin/courses/Data Visualization/Assignments/Fall16/Assignment 4")
+   library(png)
+   library(grid)
+  img <- readPNG("./img/OliveRegions.png")
+  grid.raster(img)
+  setwd(oldwd)
+    ```
+
+
+    Once you load this file into your `R` session there will be a data set called \texttt{olive}. 
+
+
+    ```{r, eval=FALSE}
+# For example, you could use the source command.  
+# Here the file is stored in a sub-directory "R" of the current directory "."
+load("./R/olive.Rda")
+# Once loaded the data is available as the data frame `diabetes'
+head(olive)
+    ```
+
+    ```{r, echo=FALSE}
+oldwd <- getwd()
+setwd("/Users/rwoldford/Documents/Admin/courses/Data Visualization/Assignments/Fall16/Assignment 4")
+load("./R/olive.Rda")
+head(olive)
+setwd(oldwd)
+    ```
+    
+    In this question you are going to focus on the fatty acid `oleic`.
+    
+    a. (2 marks) Separate the data on `oleic` into 9 different groups as defined by the olive growing `Area`, and draw side by side boxplots of all 9 groups.  Colour the boxplots uniquely using
+        ```{r}
+    library(colorspace)
+    cols <- rainbow_hcl(9) # Use these colours.
+        ```
+    Show your code together with your output.
+    
+    b. Load the `R` package `PairViz` (i.e. `library(PairViz)`).  Use the variate `oleic` and the same colours for the olive growing areas as in part (a) throughout the following:
+         i. (3 marks) Suppose we wish every pair of boxplots to appear next to one another in the same plot.  
+            - How many such pairwise comparisons exist?
+            - Give the code that will construct this display (without any other constraint on the ordering).
+            - Show the display which resulted from your code. 
+        
+        ii. (5 marks) Suppose we wish every pair of boxplots to appear next to one another in the same plot but that the boxplots should be grouped so that all areas appear only once in each group.  
+            - Maintaining the same colours for the areas as before, 
+            give the code that will construct this display 
+            (without any other constraint on the ordering).  
+            - Show the display which resulted from your code. 
+        
+        iii. (7 marks) Construct $t$ tests for every pair of olive growing areas (recall  `pairwise.t.test` from class).  Use the significance levels from these tests to construct an ordering of the boxplot pairs, one which favours having the most significantly different pairs at the left of the display.  
+            - Show your code.
+            - Show the resulting display.
+            - Does the ordering perfectly arrange the boxplots so that for any pairwise comparison, those to the left are more significant and those to the right are less significant? 
+            - Explain why the ordering was successful (or unsuccessful) in this way.
+            - Show a display showing only the first 8 comparisons.
+        
+        iv. (7 marks) Use the significance levels from part (iii) but now order the boxplots so that the **least** significant differences appear earliest in the sequence from left to right.
+            - Show your code.
+            - Show the resulting display.
+            - Does the ordering perfectly arrange the boxplots so that for any pairwise comparison, those to the left are less significant and those to the right are more significant? 
+            - Explain why the ordering was successful (or unsuccessful) in this way.
+            - Show a display showing only the first 8 comparisons.
+            
+        v. (2 marks) Is the sequence used in part (iii) the reverse of that in part (iv)? 
+            - If it is, must it be the reverse?  
+            - If it is not, is it impossible for it to be the same?  
+            - Either way, explain your reasoning.
+            
+    c. The olive growing areas are divided into three different regions: North, South, and Sardinia.  In this part of the question, interest lies only in comparisons between each growing area in the south  and each area in Sardinia.  That is, each southern area (4 areas) is to be compared to each Sardinian area  (2 areas) yielding a total of 8 comparisons of interest.
+    
+        i. (4 marks)  Having loaded `PairViz`, create a graph having all six areas in the South and Sardinia as nodes and with edges between every pair whose comparison is of interest.
+            - plot this graph
+            - show the code used to create the graph and to plot it.
+            
+        ii. (4 marks)  Using the graph from part (i), construct an Eulerian and use that Eulerian to produce a sequence of boxplots that show the comparisons of interest.
+            - show the boxplot display
+            - show the code used to construct the Eulerian and the display.
+           
+        
+3.  **Antarctic sea ice**.  On the website for this assignment, in the directory called `R` you will find a file called `seaice.csv`.  Download this file.
+
+    We will need to do some manipulations to this data before it can be easily used in our analysis.
+
+    ```{r, eval=FALSE, echo=FALSE}
+    setwd("/Users/rwoldford/Documents/Admin/courses/Data\ Visualization/Assignments/Fall16/Assignment\ 5/R/")
+    
+# Now read the data
+seaice <- read.csv("seaice.csv", header=TRUE)
+head(seaice)
+```
+
+    ```{r, eval=FALSE}
+# Set your working directory to wherever you stored the file "seaice.csv"
+# Suppose you put that in the directory "/MyHome/MyStatsStuff/"
+mydir <- "/MyHome/MyStatsStuff/"
+setwd(mydir)
+# Now read the data
+seaice <- read.csv("seaice.csv", header=TRUE)
+head(seaice)
+    ```
+
+    The last line above shows that `seaice` is a data frame having four variates.  The first three identify the year, month, and day that the last measurement was taken.  The last measure is a determination of the extent of Antarctic sea ice in millions of square kilometres as determined by satellite imagery.
+    
+    a. *Irregular time series* 
+    First, we begin by putting the year, month, and day together into a single date. Do this as follows:
+    ```{r, eval=FALSE}
+    date <- paste(seaice$Year,seaice$Month,seaice$Day, sep=" ")
+    head(date)
+    # The following function turns that into a standard date format
+    # You will need the package "lubridate"
+    library(lubridate)
+    date <- ymd(date)
+    head(date)
+    # And we create a new data structure called sea.ice
+    sea.ice <- data.frame(date=date, extent = seaice$Extent)
+    head(sea.ice)
+    ```
+    
+    We will be using the data frame `sea.ice` for this part of the question.
+        i. **(4 marks)**  Call `plot(...)` directly on the data frame `sea.ice` with `cex=0.3, pch=19, col="darkgrey"`.  Zoom in on this plot and experiment with different aspect ratios by reshaping the plot's window.  Describe whatever interesting characteristics you see in the time series.
+        ii. Decomposition into a long term trend and a short term trend.  First we need to transform the data again.
+    ```{r, eval=FALSE}
+        sea.ice.xy <- xy.coords(sea.ice)
+        y <- sea.ice.xy$y
+        x <- sea.ice.xy$x
+        # plotting x and y as before will yield the same plot, but
+        # with the dates lost.
+        plot(x, y, cex=0.3, pch=19, col="darkgrey")
+    ```
+        
+    The data range from the beginning of 1979 to the end of 2014.  The number of years covered then is (2014-1979 + 1)=36.  So each year is approximately 1/36 of the series. A month is about 1/12 of this again.
+    
+    - **(2 marks)**  Using `loess(..)` as in class,  find a long term trend using `span=2/3`.  Add this trend as a curve in a different colour on top the points (as in the above plot). Describe the fit.
+    - **(2 marks)** Now fit a `loess` short term smooth with `span=1/(36*12)` to the residuals from the long term trend.  Plot the residuals from the long-term trend and add the fitted short term trend.  Describe the fit.
+    - **(3 marks)**   Plot the residuals from the short-term trend.  Describe any patterns you find.
+    - **(2 marks)**  Explain your findings.
+
+    b. **Monthly averages**  The original series was very irregular. Here we replace it with a complete series using the average extent for each month. This time series is created as follows.
+    ```{r, eval=FALSE}
+    months <- unique(seaice$Month)
+    nmonths <- length(months)
+    years <- unique(seaice$Year)
+    nyears <- length(years)
+    # check the beginning and the end months.
+    seaice[1,]
+    seaice[nrow(seaice),]
+    maxN <- nmonths * nyears
+    # place holder
+    iceMonthly <- vector("numeric", length=maxN)
+    for (i  in 1:nyears) {
+      year <- seaice[,"Year"] == years[i]
+      iceyear <- seaice[year,c("Month","Extent")]
+      for (j in 1:nmonths) {
+        index <- (i-1) * nmonths + j
+        selection <-  iceyear[,"Month"] == months[j]
+        iceMonthly[index] <- mean(iceyear[selection,"Extent"])
+      }
+    }
+    #  Now we create a time series object
+    ice <- ts(iceMonthly, start=c(1979,1), frequency=12)
+    ```
+    
+    Conduct a seasonal trend analysis on `ice` using the built-in `stl(...)` function with parameters  `s.window=11`, `s.degree=1`, and `t.degree=1`.
+        
+    i. **(3 marks)** Plot the output of \texttt{stl} and describe your findings.
+    ii. **(2 marks)** Compare the output above with the decomposition of the irregular time series in part (a).       
+        
+    
