@@ -42,15 +42,6 @@ The variate \texttt{SSPG} stands for steady state plasma glucose which measures 
 \item (3 marks) Produce a plot of a density estimate of \texttt{SSPG} and comment on what you see.
 
 ```{r}
-# Should I stretch out the limits so that this doesn't look cut off?
-library(ggplot2)
-sspg_plot = ggplot(data = diabetes, mapping = aes(x=SSPG))
-sspg_plot +
-  geom_density(colour="grey50", fill="grey50", bw="SJ") +
-  scale_x_continuous(limits=c(-100, 600))
-```
-
-```{r}
 sspg_dens = density(diabetes$SSPG, bw="SJ")
 plot(sspg_dens, main="Density Estimate of SSPG Measurements")
 polygon(sspg_dens, col="dark grey", border="dark grey", xlab="SSPG")
@@ -79,10 +70,11 @@ The shape of the quantile plot is nearly linear up until about the 60th percenti
 ```{r}
 library(qqtest)
 # Setting the seed
-# See page 57 of Part 3 of Comparing Distributions for commentary info
 set.seed(3124159)
 qqtest(data=diabetes$SSPG)
 ```
+
+As can be seen in the plot, all the points fall within the envelope, with the exception of the points at the left tail. However, it's on average expected that $n/10 = 14.5 \approx 15$ points would fall outside of the envelope even if the SSPG was from a normal distribution, and the points outside the envelope still lie very close to it. Hence, using the `qqtest` results, it would be reasonable to regard the SSPG values as a sample from a normal distribution.
 
 \item The last variate, `ClinClass`, represents the classification of each patient according to the 1979 medical criteria into one of three groups: 1 = "Overt Diabetic",  2 = "Chemical Diabetic", and  3 = "Normal". 
 
@@ -174,14 +166,13 @@ From the lineup test, it is visually clear that the true plot is at $i = 6$ - wh
 \item (4 marks)  Use `qqtest` to construct a lineup plot making the same assessment, but this time assess whether the overt diabetic values of `SSPG` might have been generated from the same distribution as the normal patients.  Use  `set.seed(3124159)` and show your code. What conclusions do you draw?
 
 ```{r}
-# See page 57 of Part 3 of Comparing Distributions for commentary info
 set.seed(3124159)
 overt_SSPG = diabetes[diabetes$ClinClass == 1,]$SSPG
 qqtest(data = overt_SSPG, dataTest=normal_SSPG,
-       main="Testing if Overt diabetic values of SSPG from Normal patients")
+       lineup=TRUE)
 ```
 
-Most of the points in the plot lie within the envolepe, with a few at the left tail sitting outside the envelope. Hence, there is not enough evidence to reject the hypothesis that the overt diabetic values of `SSPG` might have been generated from the same distribution as the normal patients.
+It is difficult to see a significant difference between any of the plots. Plot 16 stands out the most personally, but this differs from the `trueLoc` at $18$. Hence, using this lineup test, even though in all plots the overt diabetic SSPG values fall within the envelope, there is not enough evidence to reject the hypothesis that the overt diabetic values of `SSPG` might have been generated from the same distribution as the normal patients. The qqtests seem to be producing a type II error.
 
 
 \item \textbf{Grad students, bonus undergraduates}  (8 marks) Consider the following code:
@@ -197,7 +188,7 @@ layout=c(5,4))
 The function `mixRandomly` will need to be rewritten to handle `data` being a list of three samples.  Write the function `myQuantilePlot` so that it overlays the sample quantile functions of each of `x`, `y`, and `z` in the same display using different colours.  Hand in your code for these two functions and illustrate the outcome (using `set.seed(314159)`) on `SSPG` for the three different clinical classes.  Comment on your findings.
 
 
-```{r fig.align="center", fig.width=15, fig.height=15}
+```{r fig.align="center", fig.width=10, fig.height=10}
 mixRandomly <- function(data) {
   # Note that data need not be a data frame
   # It is expected to be a list with an x, a y and a z component
@@ -254,6 +245,395 @@ From the lineup test, it is visually clear that the true plot is at $i = 5$ - wh
 \eenum
 \eenum
 
+\item Download the `olive` data from the course website. In that file, there is a dataset on the fatty acid content of 572 different Italian olive oils.  In total eight different fatty acids are measured.  All olive oils come from one of nine different olive growing regions in Italy. 
 
+```{r, echo=FALSE, fig.align="center", fig.width=3}
+library(png)
+library(grid)
+img <- readPNG("./img/OliveRegions.png")
+grid.raster(img)
+```
+
+
+Once you load this file into your `R` session there will be a data set called \texttt{olive}. 
+
+```{r, echo=FALSE}
+load("./R/olive.Rda")
+#head(olive)
+```
+
+In this question you are going to focus on the fatty acid `oleic`.
+    
+\benum
+\item (2 marks) Separate the data on `oleic` into 9 different groups as defined by the olive growing `Area`, and draw side by side boxplots of all 9 groups.  Colour the boxplots uniquely using
+```{r}
+library(colorspace)
+cols <- rainbow_hcl(9) # Use these colours.
+```
+
+Show your code together with your output.
+
+```{r fig.align="center", fig.width=15, fig.height=15}
+groups = with(olive, split(sqrt(oleic), Area))
+ord = order(sapply(groups, IQR))
+boxplot(groups[ord], col=cols[ord], 
+        main="Olive Growing Areas in Italy")
+```
+
+\item Load the `R` package `PairViz`.  Use the variate `oleic` and the same colours for the olive growing areas as in part (a) throughout the following:
+
+```{r}
+library(PairViz)
+```
+
+\benum
+\item (3 marks) Suppose we wish every pair of boxplots to appear next to one another in the same plot.
+\bitem
+\item How many such pairwise comparisons exist?
+
+Since we do not care about the order of the boxplots in the comparisons, the number of ways that we can choose \textbf{2} boxplots to compare out of the total \textbf{9} is $C(9,2) = \frac{9!}{7!2!} = \frac{9(8)}{2} = 36$. Hence, \textbf{36} pairwise comparisons exist.
+
+\item Give the code that will construct this display (without any other constraint on the ordering).
+\item Show the display which resulted from your code.
+
+```{r fig.align="center", fig.width=27, fig.height=14}
+# Make this bigger and shorten names
+n = length(groups)
+ordEul = eulerian(n)
+boxplot(groups[ordEul], col=cols[ordEul],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Oleic Levels by Olive Growing Area")
+```
+
+\eitem        
+
+\item (5 marks) Suppose we wish every pair of boxplots to appear next to one another in the same plot but that the boxplots should be grouped so that all areas appear only once in each group. 
+\bitem
+\item Maintaining the same colours for the areas as before, give the code that will construct this display (without any other constraint on the ordering).  
+\item Show the display which resulted from your code.
+
+```{r fig.align="center", fig.width=20, fig.height=14}
+ordHam = hpaths(n, matrix=FALSE)
+boxplot(groups[ordHam], col=cols[ordHam],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Olive Growing Areas in Italy")
+```
+\eitem
+
+\item (7 marks) Construct $t$ tests for every pair of olive growing areas (recall  `pairwise.t.test` from class).  Use the significance levels from these tests to construct an ordering of the boxplot pairs, one which favours having the most significantly different pairs at the left of the display.
+\bitem
+\item Show your code.
+\item Show the resulting display.
+
+```{r fig.align="center", fig.width=20, fig.height=14}
+# running the pairwise t-tests
+t_tests = with(olive,
+               pairwise.t.test(sqrt(oleic), Area))
+
+# creating a matrix of weights set to the sig. levels of the t-tests
+weights = matrix(0, nrow=n, ncol=n)
+rownames(weights) = names(groups)
+colnames(weights) = names(groups)
+weights[2:n, 1:(n-1)] = t_tests$p.value
+
+# getting rid of the NA values and fixing the weights matrix
+diag(weights) = 0
+for(i in 1:(n-1)) {
+  for(j in (i+1):n) {
+    weights[i,j] = weights[j,i]
+  }
+}
+
+highlowEulOrd = eulerian(-weights)
+boxplot(groups[highlowEulOrd], col=cols[highlowEulOrd],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Olive Growing Areas in Italy")
+```
+
+\item Does the ordering perfectly arrange the boxplots so that for any pairwise comparison, those to the left are more significant and those to the right are less significant?
+
+No. The majority of the medians of the boxplots pairs get closer in value, i.e more identical, as the diagram moves from left to right, and the pairs become easier to compare as a result because the boxplots become more in line with each other on the vertical scale. So most of the pairwise comparisons are ordered correctly. However, some of them (e.g. the comparison between Sicily and Coast-Sardinia) are less significant than the comparisons to their right, and should be located further to the right of the plot.
+
+\item Explain why the ordering was successful (or unsuccessful) in this way.
+
+This is likely because a Eulerian path cannot have an edges walked through again. Hence, once the Eulerian has traversed an edge and arrived at a node/region, it will choose to take the next shortest path possible from that node and it cannot travel through edges it has already visited to get to the a different path. Hence, when creating the ordering for the boxplots, the next comparison is determined by the next most significant pairwise comparison for the node that is currently being visited, and this may not always which may not be necessarily the next most significant pairwise comparison overall.
+
+\item Show a display showing only the first 8 comparisons.
+
+```{r fig.align="center", fig.width=15, fig.height=15}
+mostSig8 = highlowEulOrd[1:9]
+
+boxplot(groups[mostSig8], 
+        col=cols[mostSig8],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Olive Growing Areas in Italy")
+```
+
+\eitem
+
+\item (7 marks) Use the significance levels from part (iii) but now order the boxplots so that the **least** significant differences appear earliest in the sequence from left to right.
+\bitem
+\item Show your code.
+\item Show the resulting display.
+
+```{r fig.align="center", fig.width=20, fig.height=14}
+lowhighEulOrd = eulerian(weights)
+boxplot(groups[lowhighEulOrd], col=cols[lowhighEulOrd],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Oleic Levels by Olive Growing Area")
+```
+
+\item Does the ordering perfectly arrange the boxplots so that for any pairwise comparison, those to the left are less significant and those to the right are more significant? 
+
+No. For the most part, the medians of the boxplots pairs get further away in value, i.e less identical, as the diagram moves from left to right, and the pairs become more to compare as a result because the boxplots become more out of line with each other on the vertical scale. So most of the pairwise comparisons are ordered correctly. However, some of them (e.g. the comparison between South-Apulia and Coast-Sardinia) are more significant than the comparisons to their right, and should be located further to the right of the plot.
+
+\item Explain why the ordering was successful (or unsuccessful) in this way.
+
+This was unsuccessful for the same reasons as mentioned in the previous question: since the algorithm for `eulerian` is greedy and an edge that has already been traversed cannot be visited again, the next comparison is determined by the next least significant pairwise comparison for the node/region that is currently being visited, and this may not always which may not be necessarily the next least significant pairwise comparison overall.
+
+\item Show a display showing only the first 8 comparisons.
+
+```{r fig.align="center", fig.width=15, fig.height=15}
+leastSig8 = lowhighEulOrd[1:9]
+
+boxplot(groups[leastSig8], 
+        col=cols[leastSig8],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Olive Growing Areas in Italy")
+```
+\eitem
+
+\item (2 marks) Is the sequence used in part (iii) the reverse of that in part (iv)? 
+
+No, it is not.
+
+\bitem
+\item If it is, must it be the reverse?  
+
+No, it doesn't because there are 36 unique pairwise comparisons that can be made, so the the set of the 8 most significant ones and the set of the 8 least signifcant ones (but in reverse order) will not be the same, i.e. will not fully overlap, as this could only happen if the Eulerian traversed the same edges again, which by definition does not occur.
+
+\item If it is not, is it impossible for it to be the same? 
+
+For this type of comparison, it is possible.
+
+\item Either way, explain your reasoning.   
+
+Note that the plots of all the comparisons from most significant to least is the reverse of the plots from least to most. Hence, the only way that it would be possible for part (iii) to be the reverse of part (iv) is if there were only 8 pairwise comparisons in total to consider, instead of 36.
+
+\eitem
+
+\eenum
+
+\item The olive growing areas are divided into three different regions: North, South, and Sardinia.  In this part of the question, interest lies only in comparisons between each growing area in the south  and each area in Sardinia.  That is, each southern area (4 areas) is to be compared to each Sardinian area  (2 areas) yielding a total of 8 comparisons of interest.
+    
+\benum
+\item (4 marks)  Having loaded `PairViz`, create a graph having all six areas in the South and Sardinia as nodes and with edges between every pair whose comparison is of interest.
+\bitem
+\item plot this graph
+\item show the code used to create the graph and to plot it.
+
+```{r fig.align="center", fig.width=10, fig.height=10}
+regional = olive[olive$Region %in% c('South','Sardinia'),]
+regions = with(regional, split(sqrt(oleic), list(Area,Region), drop=TRUE))
+nodes = names(regions)
+SouthRegions = nodes[endsWith(nodes, "South")]
+SardiniaRegions = nodes[!endsWith(nodes, "South")]
+RegionGraph = new("graphNEL", nodes=nodes, edgemode="undirected")
+for (i in 1:4) {
+  stregion = SouthRegions[i]
+  for (j in 1:2) {
+    sdregion = SardiniaRegions[j]
+    RegionGraph = addEdge(stregion, sdregion, RegionGraph)
+  }
+}
+
+plot(RegionGraph, "circo")
+```
+\eitem
+
+\item (4 marks)  Using the graph from part (i), construct an Eulerian and use that Eulerian to produce a sequence of boxplots that show the comparisons of interest.
+\bitem
+\item show the boxplot display
+\item show the code used to construct the Eulerian and the display.
+
+```{r fig.align="center", fig.width=15, fig.height=15}
+ssOrd = eulerian(RegionGraph)
+
+colEulOrd = rep(0, length(ssOrd))
+for (i in 1:length(ssOrd)) {
+  colEulOrd[i] =  which(nodes==ssOrd[i])
+}
+
+boxplot(regions[ssOrd], col=cols[colEulOrd],
+        ylab=expression(sqrt("Oleic Level")),
+        main="Olive Growing Areas in the South and Sardinia")
+```
+
+\eitem
+
+\eenum
+\eenum
+
+\item  \textbf{Antarctic sea ice}  On the website for this assignment, in the directory called `R` you will find a file called `seaice.csv`.  Download this file.
+
+We will need to do some manipulations to this data before it can be easily used in our analysis.
+
+```{r}
+seaice <- read.csv("./R/seaice.csv", header=TRUE)
+```
+
+The last line above shows that `seaice` is a data frame having four variates.  The first three identify the year, month, and day that the last measurement was taken.  The last measure is a determination of the extent of Antarctic sea ice in millions of square kilometres as determined by satellite imagery.
+    
+\benum
+\item *Irregular time series* 
+First, we begin by putting the year, month, and day together into a single date. Do this as follows:
+```{r}
+date <- paste(seaice$Year,seaice$Month,seaice$Day, sep=" ")
+head(date)
+# The following function turns that into a standard date format
+# You will need the package "lubridate"
+library(lubridate)
+date <- ymd(date)
+head(date)
+# And we create a new data structure called sea.ice
+sea.ice <- data.frame(date=date, extent = seaice$Extent)
+head(sea.ice)
+```
+
+We will be using the data frame `sea.ice` for this part of the question.
+
+\benum
+\item  \textbf{(4 marks)} Call `plot(...)` directly on the data frame `sea.ice` with `cex=0.3, pch=19, col="darkgrey"`.  Zoom in on this plot and experiment with different aspect ratios by reshaping the plot's window.  Describe whatever interesting characteristics you see in the time series.
+
+```{r}
+# Aspect ratio
+savePar = par(mfrow=c(2,3), mar=c(2.5,0.1,3,0.1))
+plot(sea.ice, xlab="", ylab="", axes=FALSE,
+     main="Original Plot", cex=0.3, pch=19, col="darkgrey")
+for (aspect in c(400, 200, 500, 600)) {
+  plot(sea.ice, asp=aspect,
+       main=paste("aspect =",aspect),
+       xlab="", ylab="", axes=FALSE,
+       cex=0.3, pch=19, col="darkgrey")
+}
+par(savePar)
+```
+
+```{r}
+# Zooming with loon
+require(loon)
+l_plot(sea.ice, showScales=TRUE, 
+     size=0.3, glyph="ccircle", 
+     color="darkgrey")
+```
+
+
+The value of the extent of the Antartic sea ice stays within the same range, but it continuously sharply decreasing and increasing over short time periods.
+
+\item Decomposition into a long term trend and a short term trend.  First we need to transform the data again.
+
+```{r}
+sea.ice.xy <- xy.coords(sea.ice)
+y <- sea.ice.xy$y
+x <- sea.ice.xy$x
+# plotting x and y as before will yield the same plot, but
+# with the dates lost.
+#plot(x, y, cex=0.3, pch=19, col="darkgrey")
+```
+    
+The data range from the beginning of 1979 to the end of 2014.  The number of years covered then is (2014-1979 + 1)=36.  So each year is approximately 1/36 of the series. A month is about 1/12 of this again.
+
+\bitem   
+\item \textbf{(2 marks)} Using `loess(..)` as in class, find a long term trend using `span=2/3`.  Add this trend as a curve in a different colour on top the points (as in the above plot). Describe the fit.
+
+```{r fig.align="center"}
+ltfit = loess(y~x, span=2/3)
+ltpred = predict(ltfit)
+xord = order(x)
+plot(x, y, col="grey70", pch=19, 
+     main="Locating the Long Term Trend")
+lines(x[xord], ltpred[xord], lwd=2, col="steelblue")
+```
+
+The extent of Antarctic sea ice stays fairly consistent and stationary, then there is a small jump upwards and the extent begins to trend upwards (i.e. increase) slowly.
+
+\item \textbf{(2 marks)} Now fit a `loess` short term smooth with `span=1/(36*12)` to the residuals from the long term trend. Plot the residuals from the long-term trend and add the fitted short term trend. Describe the fit.
+
+```{r fig.align="center"}
+resids = ltfit$residuals
+plot(x, resids, col="grey70", pch=19, 
+     main="Small Fit of Residuals from Long Term Trend")
+smfit = loess(resids~x, span=1/(36*12))
+smpred = predict(smfit)
+lines(x[xord], smpred[xord], lwd=2, col="steelblue")
+```
+
+The residuals exhibit a consistently seasonal trend - it trends upward and the downwards very quickly for about every $333\frac{1}{3}$ units of x, staying with the range of about $[-10, 10]$. 
+
+\item \textbf{(3 marks)} Plot the residuals from the short-term trend.  Describe any patterns you find.
+
+```{r fig.align="center", fig.width=8, fig.height=8}
+smresids = smfit$residuals
+plot(x, smresids, col="grey70", pch=19, 
+     main="Remaining residuals on x")
+rfit = loess(smresids~x, span=1/(36*12))
+rpred = predict(rfit)
+lines(x[xord], rpred[xord], lwd=2, col="steelblue")
+```
+
+There is no consistent trend in the plot - the remaining residuals are too random to locate such a distinct pattern.
+
+\item \textbf{(2 marks)} Explain your findings.
+
+The graphs represent the different parts of the decomposition of the time series model of the Antartic sea ice extent, with the first long term trend of the extent being the main trend in the model, the short term trend of the residuals representing the seasonality of the model, and the remaining residuals representing the remaining randomness in the model.
+
+\eitem
+\eenum
+
+\item \textbf{Monthly averages}  The original series was very irregular. Here we replace it with a complete series using the average extent for each month. This time series is created as follows.
+```{r}
+months <- unique(seaice$Month)
+nmonths <- length(months)
+years <- unique(seaice$Year)
+nyears <- length(years)
+# check the beginning and the end months.
+seaice[1,]
+seaice[nrow(seaice),]
+maxN <- nmonths * nyears
+# place holder
+iceMonthly <- vector("numeric", length=maxN)
+for (i  in 1:nyears) {
+  year <- seaice[,"Year"] == years[i]
+  iceyear <- seaice[year,c("Month","Extent")]
+  for (j in 1:nmonths) {
+    index <- (i-1) * nmonths + j
+    selection <-  iceyear[,"Month"] == months[j]
+    iceMonthly[index] <- mean(iceyear[selection,"Extent"])
+  }
+}
+#  Now we create a time series object
+ice <- ts(iceMonthly, start=c(1979,1), frequency=12)
+```
+
+Conduct a seasonal trend analysis on `ice` using the built-in `stl(...)` function with parameters  `s.window=11`, `s.degree=1`, and `t.degree=1`.
+  
+\benum
+\item \textbf{(3 marks)} Plot the output of \texttt{stl} and describe your findings.
+
+```{r}
+plot(stl(ice, s.window=11,
+         s.degree=1, t.degree=1))
+```
+
+The long term trend of the data is cyclical - the short-term trends/cycles where the extent decreases and the increases again don't repeat regularly.
+
+\item \textbf{(2 marks)} Compare the output above with the decomposition of the irregular time series in part (a).  
+
+The shape of the seasonal portion of the diagram and randomness of the remainder is consistent with what was plotted in part (a) for the short term smooth of residuals and the plot of the remaining residuals respectively.     
+
+However, the main trend of the two questions are different, with the trend in part (a) having exhibited a stationary trend and the trend in part (b) being more cyclical. This is due to the irregularity of the data used in part (a), with part (b) showing the true trend of the data as the ice extents for the missing dates in part (a) have been accounted for.
+
+\eenum
+\eenum
 
 \eenum
